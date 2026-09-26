@@ -20,9 +20,9 @@ I'm a Computer Science graduate student at **NYU** with 2+ years of experience a
 
 ## Tech Stack
 
-- HTML5 / CSS3 / JavaScript
-- [Materialize CSS](https://materializecss.com/) framework
-- [Typed.js](https://mattboldt.com/demos/typed-js/) for typing animation
+- Plain HTML5 / CSS3 / JavaScript in a single `index.html`, no framework
+- Google Fonts & Font Awesome
+- A daily GitHub Action refreshes the contribution calendar (`assets/data/github-contributions.json`)
 - Google Analytics & Tag Manager
 
 ## Setup
