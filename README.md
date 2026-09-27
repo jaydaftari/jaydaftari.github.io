@@ -21,7 +21,7 @@ I'm a Computer Science graduate student at **NYU** with 2+ years of experience a
 ## Tech Stack
 
 - Plain HTML5 / CSS3 / JavaScript in `index.html`, no framework
-- Tearable UI (`assets/js/tear.js`): grab a page and rip it up for the next section or down to go back (hold ⌘/Ctrl to select text instead); nav links and scrolling past a section's edge rip it for you. The last page (Contact) can't be torn. The screen is snapshotted with [modern-screenshot](https://github.com/qq15725/modern-screenshot) and simulated as a sheet of plastic film in WebGL (desktop only)
+- Tearable UI (`assets/js/tear.js`): on desktop the page rests one screen at a time: grab it (any direction) and rip it to see what's next; the wheel and keys tear forward or turn back a screen, and the navigation goes anywhere. Phones and tablets scroll normally. Hold ⌘/Ctrl to select text. The last page (Contact) can't be torn. The screen is snapshotted with [modern-screenshot](https://github.com/qq15725/modern-screenshot) and simulated as a sheet of plastic film in WebGL (desktop only)
 - Google Fonts & Font Awesome
 - A daily GitHub Action refreshes the contribution calendar (`assets/data/github-contributions.json`)
 - Google Analytics & Tag Manager
