@@ -1,0 +1,42 @@
+# Refreshes assets/data/github-contributions.json (the contribution calendar on the portfolio) once a day.
+name: Update GitHub contributions
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch this year's contribution calendar
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          YEAR=$(date -u +%Y)
+          gh api graphql \
+            -f query='query($login:String!,$from:DateTime!,$to:DateTime!){ user(login:$login){ contributionsCollection(from:$from,to:$to){ contributionCalendar{ totalContributions weeks{ contributionDays{ date contributionCount contributionLevel } } } } } }' \
+            -f login=jaydaftari -f from="${YEAR}-01-01T00:00:00Z" -f to="${YEAR}-12-31T23:59:59Z" > raw.json
+          jq -c --argjson year "$YEAR" --arg updated "$(date -u +%Y-%m-%d)" '
+            .data.user.contributionsCollection.contributionCalendar as $c
+            | [$c.weeks[].contributionDays[]] as $d
+            | {user: "jaydaftari", year: $year, total: $c.totalContributions, start: $d[0].date,
+               counts: [$d[].contributionCount],
+               levels: [$d[].contributionLevel | {"NONE":0,"FIRST_QUARTILE":1,"SECOND_QUARTILE":2,"THIRD_QUARTILE":3,"FOURTH_QUARTILE":4}[.]],
+               updated: $updated}' raw.json > assets/data/github-contributions.json
+          rm raw.json
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- assets/data/github-contributions.json; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/github-contributions.json
+          git commit -m "Update GitHub contributions"
+          git push
