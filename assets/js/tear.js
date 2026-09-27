@@ -1,20 +1,23 @@
 /* Tearable pages: each section is a sheet of plastic film you rip off to reach the next one.
 
-   Grab the page and pull. Up tears it off toward the next section, down goes back one. The film
-   lifts toward you and gives a little; pull far enough and the edge holding it stretches into
-   strands and snaps. While you hold it, it hangs from your hand; let go and it's thrown off with
-   your mouse's speed. Nav links, the "Tear" cue, back-to-top, and wheeling or paging past a
-   section's edge rip it for you. The page you're going to is already underneath.
+   The page rests one screen at a time. Grab it and pull, any way you like: the film lifts toward
+   you and gives a little; pull far enough and the edge holding it stretches into strands and
+   snaps. While you hold it, it hangs from your hand; let go and it's thrown off with your mouse's
+   speed. The wheel and keys tear on or turn back a screen, and nav links, the "Tear" cue and
+   back-to-top go anywhere. The page you're going to is already underneath. The last page
+   (Contact) is indestructible: it stretches and springs back.
 
    The screen is photographed (modern-screenshot, loaded on first use) and laid on a Verlet sheet
    drawn with WebGL, pinned along a perforation just off-screen. Past a small strain the film
-   flows (stretches for good), goes milky and thins out, the way plastic does. Desktop layout
-   only; phones, reduced motion, no WebGL or any failure fall back to plain scrolling. */
+   flows (stretches for good), goes milky and thins out, the way plastic does. Desktop only (a
+   wide screen with a mouse or trackpad); phones, tablets, reduced motion, no WebGL or any
+   failure keep plain scrolling. */
 (function () {
   'use strict';
 
   var LIB = 'https://cdn.jsdelivr.net/npm/modern-screenshot@4.7.0/dist/index.mjs';
   var wide = window.matchMedia('(min-width: 960px)');
+  var coarse = window.matchMedia('(pointer: coarse)');   // phones and tablets just scroll
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
   var root = document.documentElement;
   var hero = document.getElementById('home');
@@ -23,28 +26,31 @@
   var pages = [hero].concat(Array.prototype.filter.call(main.children, function (n) { return n.classList.contains('o-section'); }));
 
   /* ---------- physics constants (CSS px, seconds) ---------- */
-  var COLS = 44;             // sheet resolution across; rows follow the screen's aspect
+  var COLS = 64;             // cells along the screen's long side
   var DT = 1 / 120;          // fixed sub-step
-  var ITER = 10;             // constraint passes per sub-step
-  var BEND = 0.22;           // skip-one links that resist folding: film is floppy
-  var YIELD = 1.06;          // past 6% strain the film flows: it stays stretched
-  var FLOW = 0.25;           // how quickly it flows once past yield
-  var SNAP = 2.4;            // a perforation strand snaps at this stretch of its original length...
-  var SNAP_RUN = 1.45;       // ...or much sooner once the running tear has reached it
-  var GRAVITY = 2400;        // px/s^2, from the moment the sheet comes free
-  var AIR_N = 6.5;           // drag across the sheet's face (1/s): it glides and flutters
+  var ITER = 4;              // constraint passes per sub-step: few, so the film is elastic
+  var FILM = 0.5;            // how hard each pass pulls a link back: soft, so it flows in smooth waves
+  var BEND = 0.08;           // skip-one links that resist folding: film is floppy
+  var DAMP = 0.986;          // speed kept per sub-step: heavily damped, so motion is smooth, never twitchy
+  var YIELD = 1.25;          // past 25% strain the film flows: it stays stretched
+  var FLOW = 0.15;           // how quickly it flows once past yield
+  var SNAP = 3.2;            // a perforation strand snaps at this stretch of its original length...
+  var SNAP_RUN = 1.9;        // ...or sooner once the running tear has reached it
+  var GRAVITY = 1400;        // px/s^2, from the moment the sheet comes free: light, so it floats off
+  var AIR_N = 8;             // drag across the sheet's face (1/s): it glides and flutters
   var AIR_T = 0.35;          // drag along the face
   var FOCAL = 1700;          // camera distance; z toward the viewer grows the sheet
   var PULL = 0.14;           // share of the screen height you pull before the film gives
   var LIGHT = norm3(-0.38, -0.52, 0.76);   // from the top left, in front of the screen
 
-  var enabledFlag = true, busy = false, queued = null;
+  var enabledFlag = true, busy = false, queued = null, sheetSeq = 0;
   var sheets = [], raf = 0, lastT = 0;
 
-  function enabled() { return enabledFlag && wide.matches && !calm.matches; }
+  function enabled() { return enabledFlag && wide.matches && !coarse.matches && !calm.matches; }
   function norm3(x, y, z) { var l = Math.sqrt(x * x + y * y + z * z); return [x / l, y / l, z / l]; }
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function vh() { return window.innerHeight; }
+  function vw() { return root.clientWidth; }            // without a classic scrollbar
   function scrollY() { return window.pageYOffset || root.scrollTop; }
   function bounds(i) {
     var r = pages[i].getBoundingClientRect(), y = scrollY();
@@ -54,9 +60,12 @@
     for (var i = pages.length - 1; i >= 0; i--) if (bounds(i).top <= y + 1) return i;
     return 0;
   }
-  /* the last page (Contact) is the back of the pad: it can't be torn, so leaving it just scrolls */
+  /* the page you're on; at the very bottom that's the last page */
+  function here() {
+    var y = scrollY();
+    return y >= root.scrollHeight - vh() - 2 ? pages.length - 1 : pageAt(y);
+  }
   var last = pages.length - 1;
-  function onLast() { return pageAt(scrollY()) === last; }
   /* instant scroll even though html has scroll-behavior:smooth (the style is read back first so
      the browser can't scroll with a stale, smooth one) */
   function jump(y) {
@@ -76,10 +85,10 @@
     if (cue) cue.setAttribute('aria-label', (on ? 'Tear' : 'Scroll') + ' to Experience');
   }
   mark();
-  [wide, calm].forEach(function (q) { if (q.addEventListener) q.addEventListener('change', mark); else if (q.addListener) q.addListener(mark); });
+  [wide, coarse, calm].forEach(function (q) { if (q.addEventListener) q.addEventListener('change', mark); else if (q.addListener) q.addListener(mark); });
 
   /* ---------- screen snapshot ---------- */
-  var lib = null, shot = null, pending = null, dirty = 0, mutatedAt = 0, heroOn = true, warmT = 0, wanted = false;
+  var lib = null, shot = null, pending = null, dirty = 0, mutatedAt = 0, heroOn = true, warmT = 0, wanted = false, shotDoneAt = -1;
   function changed() { dirty++; mutatedAt = performance.now(); if (wanted) schedule(); }
   var watch = { subtree: true, childList: true, attributes: true, characterData: true };
   new MutationObserver(changed).observe(main, watch);
@@ -88,7 +97,7 @@
   if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { heroOn = es[0].isIntersecting; }).observe(hero);
 
   function scale() { return Math.min(window.devicePixelRatio || 1, 2); }
-  function shotKey() { return [Math.round(scrollY()), window.innerWidth, vh(), scale(), dirty].join(); }
+  function shotKey() { return [Math.round(scrollY()), vw(), vh(), scale(), dirty].join(); }
   function fresh() { return !!shot && shot.key === shotKey(); }
   function visible(el) { var r = el.getBoundingClientRect(); return r.bottom > 1 && r.top < vh() - 1; }
 
@@ -102,14 +111,15 @@
          when nothing had changed for a moment before it was taken */
       if (performance.now() - mutatedAt > 1500 && shotKey() === key) shot = { key: key, canvas: canvas };
       if (pending === job) pending = null;
+      shotDoneAt = performance.now();
       return canvas;
-    }, function (err) { if (pending === job) pending = null; throw err; });
+    }, function (err) { if (pending === job) pending = null; shotDoneAt = performance.now(); throw err; });
     pending = job;
     return job.promise;
   }
 
   function paint(ms) {
-    var s = scale(), w = window.innerWidth, h = vh();
+    var s = scale(), w = vw(), h = vh();
     var out = document.createElement('canvas');
     out.width = Math.round(w * s); out.height = Math.round(h * s);
     var g = out.getContext('2d');
@@ -181,17 +191,17 @@
     'varying vec2 vUv; varying vec3 vNor; varying float vS;',
     'void main(){',
     '  vec3 n = normalize(vNor); if (!gl_FrontFacing) n = -n;',
-    '  float lit = clamp(1.0 + 0.8 * (dot(n, uLight) - uLight.z), 0.5, 1.15);',
+    '  float lit = clamp(1.0 + 0.55 * (dot(n, uLight) - uLight.z), 0.62, 1.1);',
     '  vec3 t = texture2D(uTex, clamp(vUv, 0.0, 1.0)).rgb;',
     /* film: from behind you see the print reversed through a pale layer */
     '  vec3 col = gl_FrontFacing ? t : mix(vec3(0.9, 0.92, 0.95), t, 0.42);',
     /* stretched plastic goes milky and thins until the page below shows through */
-    '  col = mix(col, vec3(0.93, 0.95, 0.98), 0.6 * smoothstep(0.1, 0.7, vS));',
-    '  float a = 1.0 - 0.6 * smoothstep(0.45, 1.5, vS);',
+    '  col = mix(col, vec3(0.93, 0.95, 0.98), 0.35 * smoothstep(0.3, 1.4, vS));',
+    '  float a = 1.0 - 0.4 * smoothstep(0.9, 2.4, vS);',
     /* gloss: a highlight wherever the film bends toward the light (none while it lies flat) */
     '  vec3 h = normalize(uLight + vec3(0.0, 0.0, 1.0));',
     '  float sp = max(pow(max(dot(n, h), 0.0), 60.0) - pow(h.z, 60.0), 0.0);',
-    '  col = col * lit + vec3(0.45 * sp);',
+    '  col = col * lit + vec3(0.14 * sp);',
     '  gl_FragColor = vec4(col * a, a);',
     '}'
   ].join('\n');
@@ -241,7 +251,7 @@
     try {
       layer = document.createElement('canvas');
       layer.setAttribute('aria-hidden', 'true');
-      layer.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;z-index:30;pointer-events:none;display:none';
+      layer.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;z-index:30;pointer-events:none;display:none';   // 100% of the viewport = clientWidth
       document.body.appendChild(layer);
       gl = layer.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true, depth: true });
       if (!gl) throw new Error('no webgl');
@@ -260,7 +270,7 @@
   }
 
   function sizeLayer() {
-    var s = scale(), w = Math.round(window.innerWidth * s), h = Math.round(vh() * s);
+    var s = scale(), w = Math.round(vw() * s), h = Math.round(vh() * s);
     if (layer.width !== w || layer.height !== h) { layer.width = w; layer.height = h; }
     var fw = Math.max(1, Math.round(w / 8)), fh = Math.max(1, Math.round(h / 8));
     if (!fbo || fbo.w !== fw || fbo.h !== fh) {
@@ -281,51 +291,65 @@
   }
 
   /* ---------- the sheet ---------- */
-  /* dir 1: the perforation is along the bottom and the sheet leaves upward (on to the next page);
-     dir -1: along the top, and it leaves downward (back a page).
-     opt.hand 'auto' rips it by itself from a corner near opt.x; 'pointer' follows the mouse from
-     (opt.x, opt.y) and only comes free when rip() is called. */
-  function Sheet(img, dir, opt) {
-    var W = window.innerWidth, H = vh();
-    var cols = COLS, rows = Math.max(10, Math.round(COLS * H / W));
-    var nx = cols + 1, lines = rows + 2, n = nx * lines, cw = W / cols, ch = H / rows;
-    var pin = dir > 0 ? lines - 1 : 0;           // the off-screen perforation line
-    this.W = W; this.H = H; this.dir = dir; this.nx = nx; this.lines = lines; this.n = n; this.t = 0;
+  /* the way a sheet leaves when held along one side */
+  function awayFrom(pin) { return pin === 'top' ? [0, 1] : pin === 'bottom' ? [0, -1] : pin === 'left' ? [1, 0] : [-1, 0]; }
+
+  /* pin: the side held by the perforation, just off-screen ('top', 'bottom', 'left', 'right');
+     the sheet leaves the other way. On to the next page it goes up ('bottom') or, swiped on a
+     phone, left ('right'); back a page, down ('top') or right ('left').
+     opt.hand 'auto' rips it by itself from a corner (on the side of opt.x / opt.y); 'pointer'
+     follows the mouse or finger from (opt.x, opt.y) and only comes free when rip() is called. */
+  function Sheet(img, pin, opt) {
+    var W = vw(), H = vh();
+    /* cells along the long side; the short side follows the screen's aspect */
+    var long = COLS, cols, rows;
+    if (W >= H) { cols = long; rows = Math.max(8, Math.round(long * H / W)); }
+    else { rows = long; cols = Math.max(8, Math.round(long * W / H)); }
+    var eL = pin === 'left' ? 1 : 0, eR = pin === 'right' ? 1 : 0, eT = pin === 'top' ? 1 : 0, eB = pin === 'bottom' ? 1 : 0;
+    var nx = cols + 1 + eL + eR, ny = rows + 1 + eT + eB, n = nx * ny, cw = W / cols, ch = H / rows;
+    var away = this.away = awayFrom(pin);
+    var horiz = away[1] === 0;
+    this.W = W; this.H = H; this.pin = pin; this.nx = nx; this.lines = ny; this.n = n; this.t = 0;
     var pos = this.pos = new Float32Array(n * 3), prev = this.prev = new Float32Array(n * 3);
     var inv = this.inv = new Float32Array(n), uv = new Float32Array(n * 2);
     this.nor = new Float32Array(n * 3);
     this.strain = new Float32Array(n);
-    for (var L = 0; L < lines; L++) {
-      var y = (dir > 0 ? L : L - 1) * ch;
+    for (var L = 0; L < ny; L++) {
+      var y = (L - eT) * ch;
       for (var i = 0; i < nx; i++) {
-        var k = L * nx + i;
-        pos[k * 3] = prev[k * 3] = i * cw; pos[k * 3 + 1] = prev[k * 3 + 1] = y;
-        uv[k * 2] = i / cols; uv[k * 2 + 1] = y / H;
-        inv[k] = L === pin ? 0 : 1;
+        var k = L * nx + i, x = (i - eL) * cw;
+        pos[k * 3] = prev[k * 3] = x; pos[k * 3 + 1] = prev[k * 3 + 1] = y;
+        uv[k * 2] = x / W; uv[k * 2 + 1] = y / H;
+        inv[k] = (eT && L === 0) || (eB && L === ny - 1) || (eL && i === 0) || (eR && i === nx - 1) ? 0 : 1;
         this.nor[k * 3 + 2] = 1;
       }
     }
     this.home = new Float32Array(pos);            // where each point lies on the pad
 
-    var A = [], B = [], S = [], T = [], vert = [];
-    function link(a, b, s, t) { A.push(a); B.push(b); S.push(s); T.push(t ? 1 : 0); return A.length - 1; }
-    function perfCell(L) { return dir > 0 ? L === lines - 2 : L === 0; }
-    function touchesPin(a, b) { return Math.floor(a / nx) === pin || Math.floor(b / nx) === pin; }
-    for (L = 0; L < lines; L++) {
+    /* links: a link from the perforation line to the sheet is a perforation link (it can tear) */
+    var A = [], B = [], S = [], T = [], hId = [], vId = [];
+    function link(a, b, s) {
+      if (!inv[a] && !inv[b]) return -1;
+      A.push(a); B.push(b); S.push(s); T.push(!inv[a] || !inv[b] ? 1 : 0);
+      return A.length - 1;
+    }
+    for (L = 0; L < ny; L++) {
       for (i = 0; i < nx; i++) {
         k = L * nx + i;
-        if (i < cols && L !== pin) link(k, k + 1, 1, false);
-        if (L < lines - 1) vert[k] = link(k, k + nx, 1, perfCell(L));
-        if (i < cols - 1 && L !== pin) link(k, k + 2, BEND, false);
-        if (L < lines - 2 && !touchesPin(k, k + 2 * nx)) link(k, k + 2 * nx, BEND, false);
+        if (i < nx - 1) hId[k] = link(k, k + 1, 1);
+        if (L < ny - 1) vId[k] = link(k, k + nx, 1);
+        if (i < nx - 2 && inv[k] && inv[k + 2]) link(k, k + 2, BEND);
+        if (L < ny - 2 && inv[k] && inv[k + 2 * nx]) link(k, k + 2 * nx, BEND);
       }
     }
     var tris = [], perf = [];
-    for (L = 0; L < lines - 1; L++) {
-      for (i = 0; i < cols; i++) {
+    for (L = 0; L < ny - 1; L++) {
+      for (i = 0; i < nx - 1; i++) {
         var a = L * nx + i, b = a + 1, c = a + nx, d = c + 1;
-        var s1 = link(b, c, 1, perfCell(L)), s2 = link(a, d, 1, perfCell(L));
-        if (perfCell(L)) perf.push({ at: tris.length, cons: [vert[a], vert[b], s1, s2] });
+        var s1 = link(b, c, 1), s2 = link(a, d, 1);
+        if (!inv[a] || !inv[b] || !inv[c] || !inv[d]) {
+          perf.push({ at: tris.length, cons: [hId[a], hId[c], vId[a], vId[b], s1, s2].filter(function (q) { return q >= 0 && T[q]; }) });
+        }
         tris.push(a, c, b, b, c, d);
       }
     }
@@ -347,33 +371,56 @@
 
     /* the hand */
     var auto = opt.hand !== 'pointer';
-    var side = opt.x < W / 2 ? -1 : 1, gx, gy, R;
+    var across = horiz ? [0, 1] : [1, 0];                  // along the perforation
+    var aDim = horiz ? W : H, cDim = horiz ? H : W;
+    var side = (horiz ? opt.y : opt.x) < cDim / 2 ? -1 : 1, gx, gy, R;
     if (auto) {
-      /* near a corner opposite the perforation: it peels the corner up toward you, then rips
-         diagonally across so the sheet turns as it goes (a straight pull reads as a scroll) */
-      gx = W * (0.5 + side * 0.36) + (Math.random() - 0.5) * W * 0.05;
-      gy = dir > 0 ? H * 0.1 : H * 0.9;
-      R = Math.min(W, H) * 0.3;
-    } else { gx = opt.x; gy = opt.y; R = Math.min(W, H) * 0.24; }
+      /* near the leading corner, far from the perforation: it peels the corner up toward you,
+         then rips diagonally across so the sheet turns as it goes (a straight pull reads as a scroll) */
+      var lead = (horiz ? away[0] : away[1]) > 0 ? 0.9 : 0.1, acr = 0.5 + side * 0.36 + (Math.random() - 0.5) * 0.05;
+      gx = horiz ? W * lead : W * acr;
+      gy = horiz ? H * acr : H * lead;
+      R = Math.min(W, H) * 0.42;
+    } else { gx = opt.x; gy = opt.y; R = Math.min(W, H) * 0.4; }
     var grab = [];
     for (k = 0; k < n; k++) {
       if (!inv[k]) continue;
       var ex = pos[k * 3] - gx, ey = pos[k * 3 + 1] - gy, dd = Math.sqrt(ex * ex + ey * ey);
-      if (dd < R) { var wgt = 1 - dd / R; grab.push({ k: k, w: wgt * wgt, ox: ex, oy: ey }); }
+      if (dd < R) grab.push({ k: k, w: 0.5 + 0.5 * Math.cos(Math.PI * dd / R), ox: ex, oy: ey });   // smooth falloff to the edge
     }
-    var tilt = (Math.random() - 0.5) * 0.14;
+    var slant = -side * 0.5 + (Math.random() - 0.5) * 0.14;
     this.hand = {
       mode: auto ? 'auto' : 'pointer', grab: grab, x: gx, y: gy, z: 0, tx: gx, ty: gy, tz: 0,
-      dir: norm3(-side * 0.5 + tilt, dir > 0 ? -1 : 1, 0.3), s: 0, v: 0, t0: 0, done: -1,
-      peel: auto ? [-side * W * 0.04, dir * H * 0.05, Math.min(W, H) * 0.2] : null
+      dir: norm3(away[0] + across[0] * slant, away[1] + across[1] * slant, 0.3), s: 0, v: 0, t0: 0, done: -1,
+      peel: auto ? [-away[0] * aDim * 0.05 - across[0] * side * cDim * 0.04, -away[1] * aDim * 0.05 - across[1] * side * cDim * 0.04, Math.min(W, H) * 0.2] : null
     };
     this.free = auto; this.freeAt = 0; this.settled = false;
+    this.solid = !!opt.solid;                     // indestructible: it stretches, never tears
+    this.keep = opt.hand === 'still';             // a still cover stays until it's told to go
+    /* stacking: a still cover lies under everything, a page being put back over everything, and
+       between them newer torn sheets lie under older ones */
+    this.rank = opt.hand === 'still' ? -1e9 : opt.hand === 'arrive' ? 1e9 : -(++sheetSeq);
+    if (opt.hand === 'still' || opt.hand === 'arrive') {
+      this.hand = null; this.free = false;
+      for (k = 0; k < n; k++) inv[k] = 1;         // nothing pinned: it's lying on the pad, not bound to it
+    }
+    if (opt.hand === 'arrive') {
+      /* a page put back on the pad: it drifts in from above, a little askew, and settles flat */
+      this.arrive = true;
+      var tw = (Math.random() - 0.5) * 0.1, cs = Math.cos(tw), sn = Math.sin(tw);
+      for (k = 0; k < n; k++) {
+        var px = pos[k * 3] - W / 2, py = pos[k * 3 + 1] - H / 2;
+        pos[k * 3] = prev[k * 3] = W / 2 + px * cs - py * sn;
+        pos[k * 3 + 1] = prev[k * 3 + 1] = H / 2 + px * sn + py * cs - H * 1.05;
+        pos[k * 3 + 2] = prev[k * 3 + 2] = 140;
+      }
+    }
 
     /* distance of each perforation link from the grabbed side, for the running tear */
     var zipAt = this.zipAt = new Float32Array(m);
     for (q = 0; q < m; q++) if (this.tear[q]) {
-      var fx = inv[A[q]] ? pos[A[q] * 3] : pos[B[q] * 3];
-      zipAt[q] = side < 0 ? fx : W - fx;
+      var f3 = (inv[A[q]] ? A[q] : B[q]) * 3, f = horiz ? pos[f3 + 1] : pos[f3];
+      zipAt[q] = side < 0 ? f : cDim - f;
     }
     this.zip = -1;
 
@@ -400,7 +447,7 @@
   };
   /* pulled far enough: the perforation starts to go */
   Sheet.prototype.rip = function () {
-    if (this.free) return;
+    if (this.free || this.solid) return;
     this.free = true; this.freeAt = this.t; this.zip = 0;
   };
   /* let go before it tore: the hand eases back and the film settles flat on the pad */
@@ -414,16 +461,18 @@
     var h = this.hand;
     if (!h) return;
     var sp = Math.sqrt(vx * vx + vy * vy);
-    h.dir = sp > 350 ? norm3(vx / sp, vy / sp, 0.25) : norm3(0, -this.dir, 0.25);
+    h.dir = sp > 350 ? norm3(vx / sp, vy / sp, 0.25) : norm3(this.away[0], this.away[1], 0.25);
     h.mode = 'auto'; h.peel = null; h.x = h.tx; h.y = h.ty; h.z = h.tz;
-    h.s = 0; h.v = Math.max(1500, Math.min(sp, 4200)); h.t0 = this.t;
+    h.s = 0; h.v = Math.max(900, Math.min(sp, 3000)); h.t0 = this.t;
   };
 
   Sheet.prototype.step = function (dt) {
     var pos = this.pos, prev = this.prev, inv = this.inv, nor = this.nor, n = this.n, h = this.hand;
     this.t += dt;
-    var g = this.free ? GRAVITY * clamp01((this.t - this.freeAt - 0.05) / 0.2) * dt * dt : 0;
-    var an = Math.min(1, AIR_N * dt), at = Math.min(1, AIR_T * dt);
+    var g = this.free ? GRAVITY * clamp01((this.t - this.freeAt - 0.1) / 0.4) * dt * dt : 0;
+    var an = Math.min(1, AIR_N * dt), at = Math.min(1, AIR_T * dt), home = this.home;
+    /* a page being put back is drawn home by a spring that firms up as it arrives */
+    var pull = this.arrive ? Math.pow(13 * clamp01(this.t / 0.3), 2) * dt * dt : 0, damp = this.arrive ? 0.91 : DAMP;
     for (var k = 0; k < n; k++) {
       if (!inv[k]) continue;
       var i3 = k * 3;
@@ -431,19 +480,21 @@
       var vn = vx * nor[i3] + vy * nor[i3 + 1] + vz * nor[i3 + 2];
       vx -= nor[i3] * vn * an + vx * at; vy -= nor[i3 + 1] * vn * an + vy * at; vz -= nor[i3 + 2] * vn * an + vz * at;
       prev[i3] = pos[i3]; prev[i3 + 1] = pos[i3 + 1]; prev[i3 + 2] = pos[i3 + 2];
+      vx *= damp; vy *= damp; vz *= damp;
+      if (pull) { vx += (home[i3] - pos[i3]) * pull; vy += (home[i3 + 1] - pos[i3 + 1]) * pull; vz -= pos[i3 + 2] * pull; }
       pos[i3] += vx; pos[i3 + 1] += vy + g; pos[i3 + 2] += vz;
     }
 
     if (h && h.mode === 'auto') {
       /* peel the corner up, then yank: accelerates hard and holds a steady pull, letting go only
          once the torn sheet is being carried off the screen */
-      var t = this.t - h.t0, lift = h.peel ? 1 - Math.pow(1 - clamp01(t / 0.13), 3) : 0;
-      if (!h.peel || t > 0.07) { h.v = Math.min(3400, h.v + 15000 * dt); h.s += h.v * dt; }
+      var t = this.t - h.t0, lift = h.peel ? 1 - Math.pow(1 - clamp01(t / 0.3), 3) : 0;
+      if (!h.peel || t > 0.16) { h.v = Math.min(1300, h.v + 4000 * dt); h.s += h.v * dt; }
       h.tx = h.x + (h.peel ? h.peel[0] * lift : 0) + h.dir[0] * h.s;
       h.ty = h.y + (h.peel ? h.peel[1] * lift : 0) + h.dir[1] * h.s;
       h.tz = h.z + (h.peel ? h.peel[2] * lift : 0) + h.dir[2] * h.s;
       if (this.broken === this.tearable && h.done < 0) h.done = this.t;
-      if ((h.done >= 0 && this.clearing()) || t > 1.1) { this.hand = h = null; this.release(); }
+      if ((h.done >= 0 && this.clearing()) || t > 2.4) { this.hand = h = null; this.release(); }
     } else if (h && h.mode === 'return') {
       h.k = Math.min(1, h.k + dt / 0.16);
       var e = 1 - Math.pow(1 - h.k, 3);
@@ -453,15 +504,15 @@
 
     /* once the film gives, the tear runs along the perforation from the grabbed side: strands
        it reaches snap soon after, so the far end can't stay tethered while the sheet swings */
-    if (this.free && this.zip < 0 && (this.broken || this.t - this.freeAt > 0.12)) this.zip = 0;
-    if (this.zip >= 0) this.zip += 5000 * dt;
+    if (this.free && this.zip < 0 && (this.broken || this.t - this.freeAt > 0.25)) this.zip = 0;
+    if (this.zip >= 0) this.zip += 1600 * dt;
     var zip = this.zip, zipAt = this.zipAt, free = this.free;
 
     var ca = this.ca, cb = this.cb, rest = this.rest, rest0 = this.rest0, stiff = this.stiff, tearF = this.tear, alive = this.alive, m = this.m;
     var flow = FLOW / ITER;
     for (var it = 0; it < ITER; it++) {
       if (h) {
-        var grab = h.grab, f = 0.28;
+        var grab = h.grab, f = 0.34;
         for (var j = 0; j < grab.length; j++) {
           var gp = grab[j], p3 = gp.k * 3, w = gp.w * f;
           pos[p3] += (h.tx + gp.ox - pos[p3]) * w;
@@ -479,14 +530,14 @@
         if (free) {
           if (tearF[c]) {
             var run = zip >= 0 && zipAt[c] < zip;
-            if (d > rest0[c] * (run ? SNAP_RUN : SNAP) || (run && zipAt[c] < zip - 700)) {
+            if (d > rest0[c] * (run ? SNAP_RUN : SNAP) || (run && zipAt[c] < zip - 450)) {
               alive[c] = 0; this.broken++; this.indexDirty = true; continue;
             }
           }
           /* plastic flow: stretched past yield, the film keeps some of the stretch */
           if (stiff[c] === 1 && d > rest[c] * YIELD) rest[c] += (d / YIELD - rest[c]) * flow;
         }
-        var s = (d - rest[c]) / (d * ws) * stiff[c];
+        var s = (d - rest[c]) / (d * ws) * stiff[c] * FILM;
         pos[a3] += dx * s * wa; pos[a3 + 1] += dy * s * wa; pos[a3 + 2] += dz * s * wa;
         pos[b3] -= dx * s * wb; pos[b3 + 1] -= dy * s * wb; pos[b3 + 2] -= dz * s * wb;
       }
@@ -496,8 +547,13 @@
 
     /* until it tears, the film lies on the pad: wherever it isn't lifted it stays put, and once
        the hand lets go it settles back flat (moved without adding speed, like friction) */
-    if (!free) {
-      var home = this.home, hold = !!h, far = 0;
+    if (this.arrive) {
+      /* landed: snap the last fraction of a pixel so it lines up with the page exactly */
+      var off = 0;
+      for (k = 0; k < n * 3; k++) off = Math.max(off, Math.abs(home[k] - pos[k]));
+      if (this.t > 0.35 && off < 0.4) { pos.set(home); prev.set(home); this.settled = true; }
+    } else if (!free) {
+      var hold = !!h, far = 0;
       for (k = 0; k < n; k++) {
         if (!inv[k]) continue;
         var q3 = k * 3, lift2 = hold ? clamp01(pos[q3 + 2] / 24) : 0, sp = 0.32 * (1 - lift2);
@@ -560,7 +616,7 @@
     this.indexDirty = false;
     var alive = this.alive, tris = this.tris, drop = {};
     this.perf.forEach(function (p) {
-      if (!alive[p.cons[0]] || !alive[p.cons[1]] || !alive[p.cons[2]] || !alive[p.cons[3]]) drop[p.at] = 1;
+      for (var i = 0; i < p.cons.length; i++) if (!alive[p.cons[i]]) { drop[p.at] = 1; return; }
     });
     var out = new Uint16Array(tris.length), o = 0;
     for (var t = 0; t < tris.length; t += 6) {
@@ -574,9 +630,10 @@
 
   /* done: settled back untorn, or thrown clear of the viewport */
   Sheet.prototype.gone = function () {
+    if (this.keep) return false;
     if (this.settled) return true;
     if (!this.free || this.hand) return false;
-    if (this.t - this.freeAt > 3.5) return true;
+    if (this.t - this.freeAt > 6) return true;
     var pos = this.pos, inv = this.inv, W = this.W, H = this.H, cx = W / 2, cy = H / 2;
     for (var k = 0; k < this.n; k++) {
       if (!inv[k]) continue;
@@ -595,15 +652,16 @@
 
   /* ---------- frame ---------- */
   function draw() {
-    var W = window.innerWidth, H = vh();
+    var W = vw(), H = vh();
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, layer.width, layer.height);
     gl.clearColor(0, 0, 0, 0);
     gl.clearDepth(1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     /* newest sheet is the lowest in the pile: draw it first, older (falling) ones over it */
-    for (var i = sheets.length - 1; i >= 0; i--) {
-      var sh = sheets[i];
+    var order = sheets.slice().sort(function (a, b) { return a.rank - b.rank; });
+    for (var i = 0; i < order.length; i++) {
+      var sh = order[i];
       sh.normals();
       sh.indices();
       gl.bindBuffer(gl.ARRAY_BUFFER, sh.bPos); gl.bufferData(gl.ARRAY_BUFFER, sh.pos, gl.DYNAMIC_DRAW);
@@ -621,7 +679,7 @@
       gl.uniform1i(P.uTex, 0);
       gl.uniform2f(P.uView, W, H);
       gl.uniform1f(P.uF, FOCAL);
-      gl.uniform1f(P.uBias, (sheets.length - 1 - i) * 0.002);   // older sheets sit higher in the pile
+      gl.uniform1f(P.uBias, i * 0.002);   // drawn later = higher in the pile
       gl.uniform3f(P.uLight, LIGHT[0], LIGHT[1], LIGHT[2]);
       gl.drawElements(gl.TRIANGLES, sh.count, gl.UNSIGNED_SHORT, 0);
       gl.disable(gl.BLEND);
@@ -630,7 +688,7 @@
   }
 
   function shadow(sh, W, H) {
-    if (!sh.torn && !sh.hand) return;
+    if (!sh.torn && !sh.hand && !sh.arrive) return;
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo.f);
     gl.viewport(0, 0, fbo.w, fbo.h);
     gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
@@ -661,8 +719,11 @@
   }
   function unbindAttr(loc) { if (loc >= 0) gl.disableVertexAttribArray(loc); }
 
+  var carry = 0;
   function advance(dt) {
-    var steps = Math.max(1, Math.min(4, Math.round(dt / DT)));
+    carry = Math.min(carry + dt, DT * 6);
+    var steps = Math.floor(carry / DT);
+    carry -= steps * DT;
     for (var i = 0; i < sheets.length; i++) for (var s = 0; s < steps; s++) sheets[i].step(DT);
     for (i = sheets.length - 1; i >= 0; i--) if (sheets[i].gone()) { sheets[i].release(); sheets[i].dispose(); sheets.splice(i, 1); }
     if (sheets.length) draw();
@@ -696,9 +757,9 @@
   }
 
   /* lay a sheet over the screen, pixel for pixel, then move the page underneath to y */
-  function layDown(img, dir, opt, y, onRelease) {
+  function layDown(img, pin, opt, y, onRelease) {
     sizeLayer();
-    var sheet = new Sheet(img, dir, opt);
+    var sheet = new Sheet(img, pin, opt);
     sheet.onRelease = onRelease;
     sheets.push(sheet);
     layer.style.display = 'block';
@@ -714,17 +775,59 @@
   function tearTo(y, dir, grabX) {
     y = Math.max(0, Math.min(y, root.scrollHeight - vh()));
     if (Math.abs(y - scrollY()) < 2) return Promise.resolve();
-    if (onLast()) { fallback(y); return Promise.resolve(); }
-    if (busy) { queued = { y: y, dir: dir, x: grabX }; return Promise.resolve(); }
+    if (busy) { queued = { y: y, dir: dir, x: grabX }; hurry(); return Promise.resolve(); }
     if (!ensureGL()) { fallback(y); return Promise.resolve(); }
+    if (here() === last && y < scrollY()) return putBack(y);
     busy = true;
     return capture().then(function (img) {
-      return layDown(img, dir, { hand: 'auto', x: grabX == null ? 0 : grabX }, y, function () {
+      return layDown(img, dir > 0 ? 'bottom' : 'top', { hand: 'auto', x: grabX == null ? 0 : grabX, y: vh() / 2 }, y, function () {
         busy = false;
         warm();
-        if (queued) { var q = queued; queued = null; tearTo(q.y, q.dir, q.x); }
+        runQueued();
       });
     }).catch(function (e) { off(e); fallback(y); });
+  }
+
+  /* navigation asked for while a page you let go of is still springing back (a stretch of the
+     last page, or a pull that didn't tear): skip the rest of the spring, so the navigation runs now */
+  function hurry() {
+    sheets.forEach(function (sh) {
+      if (sh.free || sh.keep || sh.arrive || (sh.hand && sh.hand.mode === 'pointer')) return;
+      sh.hand = null;
+      sh.pos.set(sh.home); sh.prev.set(sh.home);
+      sh.settled = true;
+    });
+    if (sheets.length && !raf) loop();
+  }
+  function runQueued() { if (queued) { var q = queued; queued = null; tearTo(q.y, q.dir, q.x); } }
+
+  /* the last page can't be torn: going back from it, the page you're going to is put back on the
+     pad instead. The current page is held as a still picture, the page underneath moves to y and
+     is photographed, and that picture drifts in from above and settles over it */
+  function putBack(y) {
+    busy = true;
+    var cover = null;
+    return capture().then(function (img) {
+      sizeLayer();
+      cover = new Sheet(img, 'top', { hand: 'still' });
+      sheets.push(cover);
+      layer.style.display = 'block';
+      draw();
+      return new Promise(function (done) { requestAnimationFrame(function () { jump(y); done(); }); });
+    }).then(function () { return capture(); }).then(function (img) {
+      var sheet = new Sheet(img, 'top', { hand: 'arrive' });
+      sheet.onRelease = function () {
+        cover.keep = false;
+        busy = false;
+        warm();
+        runQueued();
+      };
+      sheets.push(sheet);
+      loop();
+    }).catch(function (e) {
+      if (cover) cover.keep = false;
+      off(e); fallback(y);
+    });
   }
 
   function go(i, grabX) {
@@ -745,8 +848,30 @@
     go(i, e.clientX);
   });
 
-  /* wheel: native inside a page; at a page's edge, one deliberate gesture tears to the next */
-  var gesture = 0, lastWheel = 0, lastAbs = 0, tornIn = -1, arrivedIn = -1, push = 0;
+  /* ---------- where the page rests ---------- */
+  /* The page never scrolls by itself; it only rests at stops. Every page's top is one, and a page
+     taller than the screen (on a short screen) has more, a screen at a time down to its end.
+     Going on to the next stop is always a tear; going back to the previous one is a page turn. */
+  function stops() {
+    var H = vh(), max = Math.max(0, root.scrollHeight - H), out = [];
+    pages.forEach(function (p, i) {
+      var b = bounds(i), top = Math.min(max, b.top), end = Math.min(max, b.bottom - H);
+      out.push(top);
+      if (end > top + H * 0.15) {           // a sliver that's mostly padding isn't worth a stop of its own
+        var n = Math.max(1, Math.ceil((end - top) / H));
+        for (var k = 1; k <= n; k++) out.push(top + (end - top) * k / n);
+      }
+    });
+    return out.map(Math.round).sort(function (a, b) { return a - b; }).filter(function (v, k, a) { return !k || v - a[k - 1] > 2; });
+  }
+  function nextStop() { var y = scrollY(), s = stops(); for (var k = 0; k < s.length; k++) if (s[k] > y + 2) return s[k]; return null; }
+  function prevStop() { var y = scrollY(), s = stops(); for (var k = s.length - 1; k >= 0; k--) if (s[k] < y - 2) return s[k]; return null; }
+  function tearOn(x) { var n = nextStop(); if (n != null) tearTo(n, 1, x); }
+  function turnBack() { var p = prevStop(); if (p != null) window.scrollTo({ top: p, behavior: calm.matches ? 'auto' : 'smooth' }); }
+
+  /* wheel: each gesture is one move, on (a tear) or back (a turn); a box on the page that scrolls
+     by itself (a long role's card) scrolls first, and that gesture is then spent */
+  var gesture = 0, lastWheel = 0, lastAbs = 0, doneIn = -1, boxIn = -1, handledAt = 0;
   function scrollsInside(el, dy) {
     for (; el && el !== document.body && el !== root; el = el.parentElement) {
       if (el.scrollHeight <= el.clientHeight + 1) continue;
@@ -756,71 +881,54 @@
     }
     return false;
   }
-  function edgeMove(dy, x, e, deliberate, smooth) {
-    var y = scrollY(), dir = dy > 0 ? 1 : -1, i = pageAt(y), next = i + dir;
-    if (next < 0 || next >= pages.length || i === last) return 'native';
-    var b = bounds(i), edge = dir > 0 ? b.bottom - vh() : b.top;
-    var atEdge = dir > 0 ? y >= edge - 1 : y <= edge + 1;
-    if (!atEdge) {
-      if (dir > 0 ? y + dy > edge : y + dy < edge) {
-        e.preventDefault();
-        if (smooth) window.scrollTo({ top: edge, behavior: 'smooth' }); else jump(edge);
-        return 'arrived';
-      }
-      return 'native';
-    }
-    e.preventDefault();
-    if (!deliberate()) return 'held';
-    var nb = bounds(next);
-    tearTo(dir > 0 ? nb.top : nb.bottom - vh(), dir, x);
-    return 'tore';
-  }
   window.addEventListener('wheel', function (e) {
     if (!enabled() || e.ctrlKey || e.defaultPrevented) return;
-    var now = performance.now();
-    if (now - lastWheel > 220) { gesture++; push = 0; lastAbs = 0; }
+    /* gestures are timed by when the input happened, not when it's handled: while a page is being
+       photographed the browser holds wheel events back, and a held-back momentum tail must not
+       look like a fresh swipe (that tore twice and skipped a page) */
+    var now = e.timeStamp || performance.now();
+    var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vh() : 1), ad = Math.abs(dy);
+    /* a gap that only exists because a snapshot held the page up isn't a pause in the swipe: the
+       held-back events are handled in a burst the moment the snapshot finishes */
+    var stalled = shotDoneAt > handledAt && performance.now() - shotDoneAt < 50;
+    handledAt = performance.now();
+    /* a new gesture: a pause in the stream, or a new swipe starting while the last one's momentum
+       is still dying away (momentum only ever shrinks) */
+    if ((now - lastWheel > 220 && !stalled) || (doneIn === gesture && !busy && ad > 12 && ad > lastAbs * 2.2)) { gesture++; lastAbs = 0; }
     lastWheel = now;
-    var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vh() : 1);
-    /* trackpad momentum arrives as steadily shrinking deltas; only a held or growing push counts */
-    var active = Math.abs(dy) >= lastAbs * 0.9;
-    lastAbs = Math.abs(dy);
+    lastAbs = ad;
     if (!dy || Math.abs(e.deltaX) > Math.abs(dy)) return;
-    /* a gesture that already tore is spent, momentum tail included */
-    if (busy || tornIn === gesture) { e.preventDefault(); return; }
-    if (scrollsInside(e.target, dy)) return;
-    var r = edgeMove(dy, e.clientX, e, function () {
-      /* if this gesture only just reached the edge, it has to keep pushing */
-      if (active) push += Math.abs(dy);
-      if (arrivedIn === gesture && push < 380) return false;
-      tornIn = gesture;
-      return true;
-    });
-    if (r === 'arrived') { arrivedIn = gesture; push = 0; warm(); }
+    if (boxIn !== gesture && doneIn !== gesture && scrollsInside(e.target, dy)) { boxIn = gesture; return; }
+    e.preventDefault();
+    if (busy || doneIn === gesture || boxIn === gesture) return;   // one move per gesture, momentum tail included
+    doneIn = gesture;
+    if (dy > 0) tearOn(e.clientX); else turnBack();
   }, { passive: false });
 
-  /* keyboard scrolling does the same at page edges; Home and End tear straight to the ends */
+  /* keys: Down, Page Down and Space tear on; Up, Page Up and Shift+Space turn back; Home and End go
+     to the ends */
   window.addEventListener('keydown', function (e) {
     if (!enabled() || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
     var el = document.activeElement;
     if (el && el !== document.body && el !== root && el.tagName !== 'A') return;
-    var k = e.key, amount = 0;
-    if (k === 'ArrowDown') amount = 60; else if (k === 'ArrowUp') amount = -60;
-    else if (k === 'PageDown' || (k === ' ' && !e.shiftKey)) amount = vh() * 0.85;
-    else if (k === 'PageUp' || (k === ' ' && e.shiftKey)) amount = -vh() * 0.85;
-    else if (k === 'Home' || k === 'End') {
+    var k = e.key;
+    if (k === 'Home' || k === 'End') {
       e.preventDefault();
-      if (!busy) go(k === 'Home' ? 0 : pages.length - 1, window.innerWidth / 2);
+      if (!busy) go(k === 'Home' ? 0 : pages.length - 1, vw() / 2);
       return;
-    } else return;
-    if (busy) { e.preventDefault(); return; }
-    var r = edgeMove(amount, window.innerWidth / 2, e, function () { return !e.repeat; }, true);
-    if (r === 'arrived') warm();
+    }
+    var on = k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !e.shiftKey);
+    var back = k === 'ArrowUp' || k === 'PageUp' || (k === ' ' && e.shiftKey);
+    if (!on && !back) return;
+    e.preventDefault();
+    if (busy || e.repeat) return;
+    if (on) tearOn(vw() / 2); else turnBack();
   });
 
   /* ---------- tearing by hand ---------- */
-  /* press on the page (not on something clickable) and drag up or down: up tears toward the next
-     page, down goes back one. Page text isn't selectable while tearing is on, so a drag always
-     means the paper; hold Cmd (Ctrl on Windows/Linux) to select text instead. */
+  /* Press on the page (not on something clickable) and drag it any way you like: it rips, on to the
+     next stop. Page text isn't selectable while tearing is on, so a drag always means the paper;
+     hold Cmd (Ctrl on Windows/Linux) to select text. A touch just does what a touch does. */
   var mac = /Mac|iPhone|iPad/.test(navigator.platform || '');
   var SEL_KEY = mac ? '\u2318' : 'Ctrl';
   var selHint = hero.querySelector('.sel-key');
@@ -829,12 +937,12 @@
   var hold = null;
 
   document.addEventListener('pointerdown', function (e) {
-    if (!enabled() || busy || e.button !== 0 || e.metaKey || e.ctrlKey || (e.pointerType !== 'mouse' && e.pointerType !== 'pen')) return;
+    if (!enabled() || busy || e.button !== 0 || e.metaKey || e.ctrlKey || !e.isPrimary) return;
+    if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
     if (!(hero.contains(e.target) || main.contains(e.target)) || (e.target.closest && e.target.closest(NOGRAB))) return;
-    if (pages[last].contains(e.target) || onLast()) return;
     selectable(false);                    // a plain press is for tearing: drop any earlier selection
     hold = { id: e.pointerId, x: e.clientX, y: e.clientY, cx: e.clientX, cy: e.clientY, dir: 0, trail: [[e.clientX, e.clientY, e.timeStamp]] };
-    /* start the picture now; it's usually ready by the time the drag declares itself */
+    /* start the picture now: it's usually ready by the time the drag declares itself */
     if (!fresh() && ensureGL()) capture().catch(function () {});
   });
 
@@ -844,40 +952,61 @@
     g.cx = e.clientX; g.cy = e.clientY;
     g.trail.push([e.clientX, e.clientY, e.timeStamp]);
     if (g.trail.length > 8) g.trail.shift();
-    var dx = g.cx - g.x, dy = g.cy - g.y;
+    var dx = g.cx - g.x, dy = g.cy - g.y, ax = Math.abs(dx), ay = Math.abs(dy);
     if (!g.dir) {
-      /* wait until the drag says which way; a pull that starts off diagonal still counts. A
-         clearly sideways drag is someone trying to select text: tell them how */
-      if (Math.abs(dy) < 8 || Math.abs(dy) < Math.abs(dx) * 0.6) {
-        if (!g.hinted && Math.abs(dx) > 40) { g.hinted = true; tip(g.cx, g.cy); }
-        return;
-      }
-      begin(g, dy < 0 ? 1 : -1);
+      /* the sheet is held along the side away from your pull, so it leaves the way you rip it */
+      if (ax < 8 && ay < 8) return;
+      start(g, ay >= ax ? (dy < 0 ? 'bottom' : 'top') : (dx < 0 ? 'right' : 'left'));
+      if (!g.dir) return;
     }
     aimAt(g);
   });
 
-  function begin(g, dir) {
-    g.dir = dir;
-    var i = pageAt(scrollY()), j = i + dir;
+  /* every rip goes on to the next stop, whichever way you pull; going back is a page turn or the
+     navigation. At the last stop the page is indestructible: it stretches, springs back, never tears */
+  function start(g, pin) { begin(g, pin, nextStop()); }
+
+  function begin(g, pin, target) {
+    g.dir = pin;
+    g.solid = target == null;
     g.origin = scrollY();
-    g.target = j >= 0 && j < pages.length ? bounds(j).top : null;   // nothing there: it only stretches
+    g.target = target;
     busy = true;
     root.classList.add('is-tearing');
+    /* nothing to reveal: lifting the film shows the bare pad, not a second copy of the page */
+    if (g.solid) root.classList.add('tear-solo');
     if (window.getSelection) window.getSelection().removeAllRanges();
-    if (!ensureGL()) { busy = false; root.classList.remove('is-tearing'); hold = null; return; }
+    if (!ensureGL()) { busy = false; root.classList.remove('is-tearing', 'tear-solo'); hold = null; return; }
     capture().then(function (img) {
-      if (g.up) { busy = false; root.classList.remove('is-tearing'); return; }   // let go before the picture was ready
-      return layDown(img, dir, { hand: 'pointer', x: g.x, y: g.y }, g.target, function () {
+      /* let go before the picture was ready: a real flick still tears (the sheet finishes the rip
+         by itself); a nudge doesn't */
+      var auto = !!g.up;
+      if (auto && (g.solid || !flicked(g, pin))) {
+        busy = false; root.classList.remove('is-tearing', 'tear-solo');
+        runQueued();
+        return;
+      }
+      return layDown(img, pin, { hand: auto ? 'auto' : 'pointer', x: g.x, y: g.y, solid: g.solid }, g.target, function () {
         if (g.sheet && !g.sheet.free) jump(g.origin);   // it settled back untorn: put the page back where it was
         busy = false;
-        root.classList.remove('is-tearing');
+        root.classList.remove('is-tearing', 'tear-solo');
         warm();
+        runQueued();
       }).then(function (sheet) {
         g.sheet = sheet;
-        if (g.up) finish(g); else aimAt(g);
+        if (!auto) { if (g.up) finish(g); else aimAt(g); }
       });
-    }).catch(function (e) { off(e); root.classList.remove('is-tearing'); hold = null; });
+    }).catch(function (e) { off(e); root.classList.remove('is-tearing', 'tear-solo'); hold = null; });
+  }
+
+  /* far enough, or fast enough, away from the perforation to count as a rip */
+  function flicked(g, pin) {
+    var a = awayFrom(pin), tr = g.trail, last = tr[tr.length - 1], first = tr[0];
+    for (var i = tr.length - 1; i >= 0; i--) { first = tr[i]; if (last[2] - tr[i][2] > 80) break; }
+    var dt = Math.max(1, last[2] - first[2]) / 1000;
+    var speed = ((last[0] - first[0]) * a[0] + (last[1] - first[1]) * a[1]) / dt;
+    var dist = (g.cx - g.x) * a[0] + (g.cy - g.y) * a[1];
+    return dist > (a[1] === 0 ? vw() * 0.18 : vh() * 0.1) || speed > 450;
   }
 
   function aimAt(g) {
@@ -885,11 +1014,14 @@
     if (!sh || !sh.hand) return;
     var dx = g.cx - g.x, dy = g.cy - g.y, dist = Math.sqrt(dx * dx + dy * dy);
     if (!sh.free) {
-      /* the film resists: it follows less the further you pull, and lifts toward you */
-      var k = 1 / (1 + dist / 260);
-      if (g.target != null && -dy * g.dir > vh() * PULL) sh.rip();
-      sh.aim(g.x + dx * k, g.y + dy * k, 24 + Math.min(dist * 0.55, 190));
-    } else sh.aim(g.cx, g.cy, 150);
+      /* the film resists: it follows less the further you pull, and lifts toward you. It gives
+         once you've pulled far enough away from the perforation */
+      var small = Math.min(sh.W, sh.H), k = 1 / (1 + dist / (260 * Math.min(1, small / 800)));
+      var away = dx * sh.away[0] + dy * sh.away[1];
+      var need = sh.away[1] === 0 ? Math.max(80, sh.W * 0.22) : Math.max(80, sh.H * PULL);
+      if (away > need) sh.rip();
+      sh.aim(g.x + dx * k, g.y + dy * k, 24 + Math.min(dist * 0.55, small * 0.24));
+    } else sh.aim(g.cx, g.cy, Math.min(150, Math.min(sh.W, sh.H) * 0.19));
   }
 
   function finish(g) {
@@ -917,6 +1049,7 @@
   /* no ghost images or text selection while a page is in your hand */
   document.addEventListener('dragstart', function (e) { if (hold) e.preventDefault(); });
   document.addEventListener('selectstart', function (e) { if (hold) e.preventDefault(); });
+
   /* Cmd/Ctrl held: the page is selectable text again (and won't tear). What you select stays
      selected after you let go, so it can be copied, until the selection is cleared. */
   var modDown = false;
@@ -927,34 +1060,12 @@
   window.addEventListener('keyup', function (e) { if (isMod(e)) { modDown = false; if (selectionEmpty()) selectable(false); } });
   window.addEventListener('blur', function () { modDown = false; if (selectionEmpty()) selectable(false); });
   document.addEventListener('selectionchange', function () { if (!modDown && selectionEmpty()) selectable(false); });
-  /* double-clicking a word is another try at selecting */
-  document.addEventListener('dblclick', function (e) {
-    if (!enabled() || e.metaKey || e.ctrlKey || !(hero.contains(e.target) || main.contains(e.target))) return;
-    if ((e.target.closest && e.target.closest(NOGRAB)) || pages[last].contains(e.target)) return;
-    tip(e.clientX, e.clientY);
-  });
-
-  /* a small note by the pointer: how to select text on a tearable page */
-  var tipEl = null, tipT = 0;
-  function tip(x, y) {
-    if (!tipEl) {
-      tipEl = document.createElement('div');
-      tipEl.className = 'tear-tip';
-      tipEl.setAttribute('role', 'status');
-      document.body.appendChild(tipEl);
-    }
-    tipEl.textContent = 'Hold ' + SEL_KEY + ' and drag to select text';
-    tipEl.style.left = x + 'px'; tipEl.style.top = y + 'px';
-    tipEl.classList.add('show');
-    clearTimeout(tipT);
-    tipT = setTimeout(function () { tipEl.classList.remove('show'); }, 1900);
-  }
 
   /* photograph ahead of time: whenever the page comes to rest, and when reaching for the nav */
   var settle = 0;
   window.addEventListener('scroll', function () {
     clearTimeout(settle);
-    settle = setTimeout(warm, 220);
+    settle = setTimeout(warm, 180);
   }, { passive: true });
   ['sideNav', 'toTop'].forEach(function (id) {
     var el = document.getElementById(id);
@@ -969,14 +1080,16 @@
     if (window.requestIdleCallback) window.requestIdleCallback(get, { timeout: 4000 }); else setTimeout(get, 2000);
   });
 
-  window.addEventListener('resize', function () { if (sheets.length) clearAll(); });
+  /* only a change of width ends a tear in progress */
+  var lastW = vw();
+  window.addEventListener('resize', function () { if (vw() !== lastW) { lastW = vw(); if (sheets.length) clearAll(); } });
   document.addEventListener('visibilitychange', function () { if (document.hidden && sheets.length) clearAll(); });
 
   window.pageTear = {
     /* returns true when it took over the scroll to y */
     to: function (y) {
       if (!enabled()) return false;
-      tearTo(y, y > scrollY() ? 1 : -1, window.innerWidth);
+      tearTo(y, y > scrollY() ? 1 : -1, vw());
       return true;
     }
   };
