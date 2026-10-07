@@ -534,7 +534,7 @@
 .pj-m.is-pinged{border-radius:12px}
 
 /* docked: one manifest + one dossier; fixed height, never scrolls the page */
-.pj.is-docked .pj-console{--pj-h:clamp(416px,calc(100vh - 208px),640px);--pj-idx:clamp(400px,52%,580px);--pj-gap:24px;--row:clamp(32px,calc(var(--pj-h) / 13),46px);position:relative;display:grid;grid-template-columns:var(--pj-idx) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:var(--pj-gap);height:var(--pj-h)}
+.pj.is-docked .pj-console{--pj-h:clamp(416px,calc(100vh - 208px),640px);--pj-idx:clamp(400px,52%,580px);--pj-gap:24px;--row:clamp(29px,calc(var(--pj-h) / 14),46px);position:relative;display:grid;grid-template-columns:var(--pj-idx) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:var(--pj-gap);height:var(--pj-h)}
 /* Dossier bodies are absolutely positioned against .pj-console. NEVER give .pj-list, .pj-item, .pj-m or .pj-h
    position, transform/translate, filter, contain or will-change, or every dossier will render inside its own row.
    (Animate the .pj-head buttons, never their ancestors. ?skills-debug warns if this breaks.) */
@@ -1497,9 +1497,9 @@
     <div class="pj-bar">
       <p class="pj-kicker">Mission manifest</p>
       <div class="pj-filters" role="group" aria-label="Show projects by track">
-        <button type="button" class="pj-chip" data-track="all" aria-pressed="true">All <span class="n">13<span class="sr-only"> projects</span></span></button>
+        <button type="button" class="pj-chip" data-track="all" aria-pressed="true">All <span class="n">14<span class="sr-only"> projects</span></span></button>
         <button type="button" class="pj-chip" data-track="dl" aria-pressed="false"><svg class="pj-shape pj-ico" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-dl"/></svg>Deep learning <span class="n">4<span class="sr-only"> projects</span></span></button>
-        <button type="button" class="pj-chip" data-track="mld" aria-pressed="false"><svg class="pj-shape pj-ico" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-mld"/></svg>ML &amp; data <span class="n">4<span class="sr-only"> projects</span></span></button>
+        <button type="button" class="pj-chip" data-track="mld" aria-pressed="false"><svg class="pj-shape pj-ico" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-mld"/></svg>ML &amp; data <span class="n">5<span class="sr-only"> projects</span></span></button>
         <button type="button" class="pj-chip" data-track="web" aria-pressed="false"><svg class="pj-shape pj-ico" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-web"/></svg>Web apps <span class="n">3<span class="sr-only"> projects</span></span></button>
         <button type="button" class="pj-chip" data-track="cc" aria-pressed="false"><svg class="pj-shape pj-ico" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-cc"/></svg>C &amp; C++ <span class="n">2<span class="sr-only"> projects</span></span></button>
       </div>
@@ -1507,7 +1507,7 @@
         <button type="button" class="pj-all" aria-pressed="false">Read all</button>
         <div class="pj-step">
           <button type="button" class="pj-prev" aria-label="Previous project" aria-disabled="true"><i class="fa fa-angle-left" aria-hidden="true"></i></button>
-          <span class="pj-count" aria-hidden="true">01 / 13</span>
+          <span class="pj-count" aria-hidden="true">01 / 14</span>
           <button type="button" class="pj-next" aria-label="Next project"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
         </div>
       </div>
@@ -1540,10 +1540,34 @@
           </article>
         </li>
         <li class="pj-item">
+          <article id="proj-autosafety" class="pj-m" data-track="mld">
+            <h3 class="pj-h">
+              <button type="button" class="pj-head" id="proj-autosafety-b" aria-expanded="false" aria-controls="proj-autosafety-body" aria-describedby="proj-autosafety-k proj-autosafety-s">
+                <span class="pj-no" aria-hidden="true">02</span>
+                <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-mld"/></svg>
+                <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Auto Safety</span><span class="pj-tags" aria-hidden="true"><span>Next.js 15</span><span>RAPIDS</span></span></span><span class="pj-sum" aria-hidden="true">An AI tool that watches live NYC traffic cameras and forecasts street risk.</span></span>
+                <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
+              </button>
+            </h3>
+            <div class="pj-body" id="proj-autosafety-body">
+              <div class="pj-dh">
+                <span class="pj-big" data-mono="AS" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-mld"/></svg></span>
+                <p class="pj-kick" id="proj-autosafety-k">02 · ML &amp; data</p>
+                <p class="pj-dt" aria-hidden="true">Auto Safety</p>
+              </div>
+              <p class="pj-desc" id="proj-autosafety-s">An AI tool that watches live NYC traffic cameras and forecasts street risk.</p>
+              <ul class="pj-facts" role="presentation"><li class="pj-tools"><b>Tools:</b> Next.js 15, React 19, TypeScript, Python, FastAPI, RAPIDS (cuDF, cuML), XGBoost, Gemma 4 vision model, Leaflet, NVIDIA DGX Spark</li></ul>
+              <p class="pj-lbl">Highlights</p>
+              <ul class="pj-hl"><li>Won the Human Impact Track at NYC Spark Hack (NVIDIA × Antler × Acer) with a working prototype built in one weekend.</li><li>Designed the app&#x27;s screens and put 364 live NYC DOT traffic cameras on a map, each analyzed on demand by a local Gemma 4 vision model that flags hazards.</li><li>Built a RAPIDS pipeline on an NVIDIA DGX Spark that maps NYC Open Data onto a hexagon grid and trains an XGBoost model to forecast risk, shown as a heatmap with a time-of-week slider.</li></ul>
+              <p class="pj-foot"><a class="pj-src" href="https://github.com/jaydaftari/autoSafety" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-github"/></svg>View source<span class="pj-path"> jaydaftari/autoSafety</span><span class="sr-only"> (opens in a new tab)</span></a></p>
+            </div>
+          </article>
+        </li>
+        <li class="pj-item">
           <article id="proj-hart" class="pj-m" data-track="dl">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-hart-b" aria-expanded="false" aria-controls="proj-hart-body" aria-describedby="proj-hart-k proj-hart-s">
-                <span class="pj-no" aria-hidden="true">02</span>
+                <span class="pj-no" aria-hidden="true">03</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-dl"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Efficient Hybrid Autoregressive Transformer</span><span class="pj-tags" aria-hidden="true"><span>PyTorch</span><span>CUDA</span></span></span><span class="pj-sum" aria-hidden="true">A faster HART text-to-image generation pipeline.</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1552,7 +1576,7 @@
             <div class="pj-body" id="proj-hart-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="HT" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-dl"/></svg></span>
-                <p class="pj-kick" id="proj-hart-k">02 · Deep learning</p>
+                <p class="pj-kick" id="proj-hart-k">03 · Deep learning</p>
                 <p class="pj-dt" aria-hidden="true">Efficient Hybrid Autoregressive Transformer</p>
               </div>
               <p class="pj-desc" id="proj-hart-s">A faster HART text-to-image generation pipeline.</p>
@@ -1567,7 +1591,7 @@
           <article id="proj-jailbreaking" class="pj-m" data-track="dl">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-jailbreaking-b" aria-expanded="false" aria-controls="proj-jailbreaking-body" aria-describedby="proj-jailbreaking-k proj-jailbreaking-s">
-                <span class="pj-no" aria-hidden="true">03</span>
+                <span class="pj-no" aria-hidden="true">04</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-dl"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Jailbreaking Deep Models</span><span class="pj-tags" aria-hidden="true"><span>Python</span><span>Jupyter Notebook</span></span></span><span class="pj-sum" aria-hidden="true">Jupyter Notebook containing the code</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1576,7 +1600,7 @@
             <div class="pj-body" id="proj-jailbreaking-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="JB" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-dl"/></svg></span>
-                <p class="pj-kick" id="proj-jailbreaking-k">03 · Deep learning</p>
+                <p class="pj-kick" id="proj-jailbreaking-k">04 · Deep learning</p>
                 <p class="pj-dt" aria-hidden="true">Jailbreaking Deep Models</p>
               </div>
               <p class="pj-desc" id="proj-jailbreaking-s">Jupyter Notebook containing the code</p>
@@ -1591,7 +1615,7 @@
           <article id="proj-gradient" class="pj-m" data-track="dl">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-gradient-b" aria-expanded="false" aria-controls="proj-gradient-body" aria-describedby="proj-gradient-k proj-gradient-s">
-                <span class="pj-no" aria-hidden="true">04</span>
+                <span class="pj-no" aria-hidden="true">05</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-dl"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Gradient Analysis for Edge Deployment</span><span class="pj-tags" aria-hidden="true"><span>Python</span><span>PyTorch</span></span></span><span class="pj-sum" aria-hidden="true">Gradient statistics that guide pruning and gradient prediction.</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1600,7 +1624,7 @@
             <div class="pj-body" id="proj-gradient-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="GA" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-dl"/></svg></span>
-                <p class="pj-kick" id="proj-gradient-k">04 · Deep learning</p>
+                <p class="pj-kick" id="proj-gradient-k">05 · Deep learning</p>
                 <p class="pj-dt" aria-hidden="true">Gradient Analysis for Edge Deployment</p>
               </div>
               <p class="pj-desc" id="proj-gradient-s">Gradient statistics that guide pruning and gradient prediction.</p>
@@ -1615,7 +1639,7 @@
           <article id="proj-roberta" class="pj-m" data-track="dl">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-roberta-b" aria-expanded="false" aria-controls="proj-roberta-body" aria-describedby="proj-roberta-k proj-roberta-s">
-                <span class="pj-no" aria-hidden="true">05</span>
+                <span class="pj-no" aria-hidden="true">06</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-dl"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Efficient Fine-Tuning of RoBERTa with LoRA</span><span class="pj-tags" aria-hidden="true"><span>Python</span><span>kaggle</span></span></span><span class="pj-sum" aria-hidden="true">Jupyter Notebook containing the fine-tuning code</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1624,7 +1648,7 @@
             <div class="pj-body" id="proj-roberta-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="RL" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-dl"/></svg></span>
-                <p class="pj-kick" id="proj-roberta-k">05 · Deep learning</p>
+                <p class="pj-kick" id="proj-roberta-k">06 · Deep learning</p>
                 <p class="pj-dt" aria-hidden="true">Efficient Fine-Tuning of RoBERTa with LoRA</p>
               </div>
               <p class="pj-desc" id="proj-roberta-s">Jupyter Notebook containing the fine-tuning code</p>
@@ -1639,7 +1663,7 @@
           <article id="proj-focal" class="pj-m" data-track="mld">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-focal-b" aria-expanded="false" aria-controls="proj-focal-body" aria-describedby="proj-focal-k proj-focal-s">
-                <span class="pj-no" aria-hidden="true">06</span>
+                <span class="pj-no" aria-hidden="true">07</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-mld"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">FOCAL</span><span class="pj-tags" aria-hidden="true"><span>Electron</span><span>Computer Vision</span></span></span><span class="pj-sum" aria-hidden="true">Website which helps user to remain focused.</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1648,7 +1672,7 @@
             <div class="pj-body" id="proj-focal-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="FO" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-mld"/></svg></span>
-                <p class="pj-kick" id="proj-focal-k">06 · ML &amp; data</p>
+                <p class="pj-kick" id="proj-focal-k">07 · ML &amp; data</p>
                 <p class="pj-dt" aria-hidden="true">FOCAL</p>
               </div>
               <p class="pj-desc" id="proj-focal-s">Website which helps user to remain focused.</p>
@@ -1663,7 +1687,7 @@
           <article id="proj-mta" class="pj-m" data-track="mld">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-mta-b" aria-expanded="false" aria-controls="proj-mta-body" aria-describedby="proj-mta-k proj-mta-s">
-                <span class="pj-no" aria-hidden="true">07</span>
+                <span class="pj-no" aria-hidden="true">08</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-mld"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">NYC MTA Ridership Dashboard</span><span class="pj-tags" aria-hidden="true"><span>PySpark</span><span>Streamlit</span></span></span><span class="pj-sum" aria-hidden="true">Analytics and forecasting for 5+ years of NYC subway ridership.</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1672,7 +1696,7 @@
             <div class="pj-body" id="proj-mta-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="MT" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-mld"/></svg></span>
-                <p class="pj-kick" id="proj-mta-k">07 · ML &amp; data</p>
+                <p class="pj-kick" id="proj-mta-k">08 · ML &amp; data</p>
                 <p class="pj-dt" aria-hidden="true">NYC MTA Ridership Dashboard</p>
               </div>
               <p class="pj-desc" id="proj-mta-s">Analytics and forecasting for 5+ years of NYC subway ridership.</p>
@@ -1687,7 +1711,7 @@
           <article id="proj-music" class="pj-m" data-track="mld">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-music-b" aria-expanded="false" aria-controls="proj-music-body" aria-describedby="proj-music-k proj-music-s">
-                <span class="pj-no" aria-hidden="true">08</span>
+                <span class="pj-no" aria-hidden="true">09</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-mld"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Music Recommendation system</span><span class="pj-tags" aria-hidden="true"><span>K-means clustering</span><span>KNN</span></span></span><span class="pj-sum" aria-hidden="true">Created it using K-means clustering algorithm and training resulted clusters on cluster number using KNN.</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1696,7 +1720,7 @@
             <div class="pj-body" id="proj-music-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="MR" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-mld"/></svg></span>
-                <p class="pj-kick" id="proj-music-k">08 · ML &amp; data</p>
+                <p class="pj-kick" id="proj-music-k">09 · ML &amp; data</p>
                 <p class="pj-dt" aria-hidden="true">Music Recommendation system</p>
               </div>
               <p class="pj-desc" id="proj-music-s">Created it using K-means clustering algorithm and training resulted clusters on cluster number using KNN.</p>
@@ -1711,7 +1735,7 @@
           <article id="proj-sentry" class="pj-m" data-track="cc">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-sentry-b" aria-expanded="false" aria-controls="proj-sentry-body" aria-describedby="proj-sentry-k proj-sentry-s">
-                <span class="pj-no" aria-hidden="true">09</span>
+                <span class="pj-no" aria-hidden="true">10</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-cc"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Embedded_Sentry</span><span class="pj-tags" aria-hidden="true"><span>C</span><span>Mbed</span></span></span><span class="pj-sum" aria-hidden="true">Generic Lock/unlock pattern recorder using STM32F429I</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1720,7 +1744,7 @@
             <div class="pj-body" id="proj-sentry-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="ES" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-cc"/></svg></span>
-                <p class="pj-kick" id="proj-sentry-k">09 · C &amp; C++</p>
+                <p class="pj-kick" id="proj-sentry-k">10 · C &amp; C++</p>
                 <p class="pj-dt" aria-hidden="true">Embedded_Sentry</p>
               </div>
               <p class="pj-desc" id="proj-sentry-s">Generic Lock/unlock pattern recorder using STM32F429I</p>
@@ -1735,7 +1759,7 @@
           <article id="proj-dexterity" class="pj-m" data-track="mld">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-dexterity-b" aria-expanded="false" aria-controls="proj-dexterity-body" aria-describedby="proj-dexterity-k proj-dexterity-s">
-                <span class="pj-no" aria-hidden="true">10</span>
+                <span class="pj-no" aria-hidden="true">11</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-mld"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Dexterity</span><span class="pj-tags" aria-hidden="true"><span>Flask</span><span>Python</span></span></span><span class="pj-sum" aria-hidden="true">A website that detects hands gesture and print it.</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1744,7 +1768,7 @@
             <div class="pj-body" id="proj-dexterity-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="DX" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-mld"/></svg></span>
-                <p class="pj-kick" id="proj-dexterity-k">10 · ML &amp; data</p>
+                <p class="pj-kick" id="proj-dexterity-k">11 · ML &amp; data</p>
                 <p class="pj-dt" aria-hidden="true">Dexterity</p>
               </div>
               <p class="pj-desc" id="proj-dexterity-s">A website that detects hands gesture and print it.</p>
@@ -1759,7 +1783,7 @@
           <article id="proj-sportal" class="pj-m" data-track="web">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-sportal-b" aria-expanded="false" aria-controls="proj-sportal-body" aria-describedby="proj-sportal-k proj-sportal-s">
-                <span class="pj-no" aria-hidden="true">11</span>
+                <span class="pj-no" aria-hidden="true">12</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-web"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Sportal</span><span class="pj-tags" aria-hidden="true"><span>Node.js</span><span>MySQL</span></span></span><span class="pj-sum" aria-hidden="true">Online Scholarship Portal for students</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1768,7 +1792,7 @@
             <div class="pj-body" id="proj-sportal-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="SP" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-web"/></svg></span>
-                <p class="pj-kick" id="proj-sportal-k">11 · Web apps</p>
+                <p class="pj-kick" id="proj-sportal-k">12 · Web apps</p>
                 <p class="pj-dt" aria-hidden="true">Sportal</p>
               </div>
               <p class="pj-desc" id="proj-sportal-s">Online Scholarship Portal for students</p>
@@ -1783,7 +1807,7 @@
           <article id="proj-cluelesschef" class="pj-m" data-track="cc">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-cluelesschef-b" aria-expanded="false" aria-controls="proj-cluelesschef-body" aria-describedby="proj-cluelesschef-k proj-cluelesschef-s">
-                <span class="pj-no" aria-hidden="true">12</span>
+                <span class="pj-no" aria-hidden="true">13</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-cc"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">cluelesschef</span><span class="pj-tags" aria-hidden="true"><span>C++</span><span>MySQL</span></span></span><span class="pj-sum" aria-hidden="true">A C++ program that gives dishes based on given ingrediants .</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1792,7 +1816,7 @@
             <div class="pj-body" id="proj-cluelesschef-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="CC" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-cc"/></svg></span>
-                <p class="pj-kick" id="proj-cluelesschef-k">12 · C &amp; C++</p>
+                <p class="pj-kick" id="proj-cluelesschef-k">13 · C &amp; C++</p>
                 <p class="pj-dt" aria-hidden="true">cluelesschef</p>
               </div>
               <p class="pj-desc" id="proj-cluelesschef-s">A C++ program that gives dishes based on given ingrediants .</p>
@@ -1807,7 +1831,7 @@
           <article id="proj-faceapp" class="pj-m" data-track="web">
             <h3 class="pj-h">
               <button type="button" class="pj-head" id="proj-faceapp-b" aria-expanded="false" aria-controls="proj-faceapp-body" aria-describedby="proj-faceapp-k proj-faceapp-s">
-                <span class="pj-no" aria-hidden="true">13</span>
+                <span class="pj-no" aria-hidden="true">14</span>
                 <svg class="pj-mini pj-shape" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#pj-s-web"/></svg>
                 <span class="pj-tx"><span class="pj-l1"><span class="pj-name">Faceapp</span><span class="pj-tags" aria-hidden="true"><span>React JS</span><span>Node JS</span></span></span><span class="pj-sum" aria-hidden="true">Website that detects face.</span></span>
                 <i class="fa fa-angle-down pj-chev" aria-hidden="true"></i>
@@ -1816,7 +1840,7 @@
             <div class="pj-body" id="proj-faceapp-body">
               <div class="pj-dh">
                 <span class="pj-big" data-mono="FA" aria-hidden="true"><svg class="pj-shape" viewBox="0 0 64 64" focusable="false"><use href="#pj-s-web"/></svg></span>
-                <p class="pj-kick" id="proj-faceapp-k">13 · Web apps</p>
+                <p class="pj-kick" id="proj-faceapp-k">14 · Web apps</p>
                 <p class="pj-dt" aria-hidden="true">Faceapp</p>
               </div>
               <p class="pj-desc" id="proj-faceapp-s">Website that detects face.</p>
@@ -2751,7 +2775,7 @@ function startPortal(canvas, hero, reduce) {
       if (!on && mqAcc.matches) sel = null;
       render();
       if (!on) { var t = sec.getBoundingClientRect().top; if (t < 0) jump(t); }
-      say(on ? 'All 13 projects shown in full.' : 'Back to the manifest' + (docked() ? ', showing ' + title(sel) + '.' : '.'));
+      say(on ? 'All 14 projects shown in full.' : 'Back to the manifest' + (docked() ? ', showing ' + title(sel) + '.' : '.'));
     }
     function hashId() {
       var h = ''; try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
@@ -2974,6 +2998,7 @@ function startPortal(canvas, hero, reduce) {
       'os-mcp-agent': { t: 'mcp-agent', ev: { python: 'Python' }, confirm: { llms: 'agents' } },
       'os-hart-v2': { t: 'hart-v2', group: 'HART', ev: { python: 'Python', pytorch: 'PyTorch' }, confirm: { transformers: 'Autoregressive Transformer' } },
       'proj-shelclub': { t: 'Shelclub', ev: { nextjs: 'Next.js 15', react: 'React 19', postgresql: 'PostgreSQL', aws: 'AWS S3' } },
+      'proj-autosafety': { t: 'Auto Safety', ev: { nextjs: 'Next.js 15', react: 'React 19', typescript: 'TypeScript', python: 'Python', fastapi: 'FastAPI', cv: 'vision model' } },
       'proj-hart': { t: 'Efficient HART', group: 'HART', ev: { python: 'Python', pytorch: 'PyTorch' }, confirm: { transformers: 'Autoregressive Transformer' } },
       'proj-jailbreaking': { t: 'Jailbreaking Deep Models', ev: { python: 'Python' }, confirm: { cv: 'ResNet-34', pytorch: null } },
       'proj-gradient': { t: 'Gradient Analysis', ev: { python: 'Python', pytorch: 'PyTorch', pruning: 'weight pruning', llms: 'large language models (LLM)' } },

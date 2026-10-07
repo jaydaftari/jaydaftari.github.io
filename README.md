@@ -12,7 +12,7 @@ I'm a Computer Science graduate student at **NYU** with 2+ years of experience a
 
 - **About** — Background, skills overview
 - **Experience** — NYC DEP, NYU (Course Assistant), IDFC First Bank, VIT Research, Premware Services
-- **Projects** — Jailbreaking Deep Models, LoRA Fine-Tuning, FOCAL, Music Recommendation, Embedded Sentry, Dexterity, Sportal, CluelessChef, FaceApp
+- **Projects** — Auto Safety (NYC Spark Hack winner), Jailbreaking Deep Models, LoRA Fine-Tuning, FOCAL, Music Recommendation, Embedded Sentry, Dexterity, Sportal, CluelessChef, FaceApp
 - **Publications** — Explainable AI for water quality (CEUR-WS) & Dynamic Phishing Safeguard (MDPI Electronics)
 - **Skills** — Python, C/C++, JS/TS, React, Flask, TensorFlow, PyTorch, AWS, Docker, Kubernetes & more
 - **Education** — MS in Computer Engineering (NYU) | BTech in CS (VIT Chennai)
