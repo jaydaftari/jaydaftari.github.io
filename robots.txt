@@ -1,7 +1,4 @@
-# Group 1
-User-agent: Googlebot
-Disallow: /nogooglebot/
-
-# Group 2
 User-agent: *
 Allow: /
+
+Sitemap: https://jaydaftari.github.io/sitemap.xml
