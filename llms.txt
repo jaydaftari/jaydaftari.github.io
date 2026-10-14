@@ -29,6 +29,7 @@ Portfolio: https://jaydaftari.github.io/
 ## Selected projects
 
 - Auto Safety: an AI tool that watches live NYC traffic cameras and forecasts street risk (Next.js 15, RAPIDS)
+- MyNextDate (Hacklytics 2026, team of four): a date planner that scores dates with an LLM (Llama 3.1 on Groq) and recommends the next one by vector similarity search (React, FastAPI, Actian Vector AI DB); https://devpost.com/software/mynextdate
 - Shelclub: an editorial magazine platform with a writers' desk and an editor review workflow (Next.js 15, Payload CMS)
 - Efficient Hybrid Autoregressive Transformer: a faster HART text-to-image generation pipeline (PyTorch, CUDA)
 - Gradient Analysis for Edge Deployment: gradient statistics that guide pruning and gradient prediction (PyTorch)
