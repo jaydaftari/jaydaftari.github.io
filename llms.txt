@@ -1,0 +1,54 @@
+# Jay Daftari
+
+> Jay Daftari is a computer scientist and Gen AI engineer trained in AI and machine learning at New York University (MS, Computer Engineering). Jay builds agentic AI systems, retrieval-augmented generation (RAG) pipelines and LLM tooling, most recently for legal teams at Lina Law and Wequity.
+
+Portfolio: https://jaydaftari.github.io/
+
+## Experience
+
+- Lina Law, Gen AI Engineer (May 2026 to Oct 2026, remote): owned end-to-end features on a Next.js/React, TypeScript, Python and PostgreSQL (Supabase) stack; built agentic AI workflows that cut legal drafting and review cycles from weeks to a couple of hours; built a real-time collaborative document editor with Claude integration; built LLM-agent observability tooling that reconstructs each run's reasoning and tool calls from an append-only event log.
+- Wequity, Gen AI Engineer (Feb 2026 to May 2026, remote): built AI agent pipelines with retrieval and multi-model routing (GPT-4o, Claude, Gemini) on FastAPI and GCP for Nora, Wequity's legal AI platform.
+- Vicktoria, Software Engineer (Nov 2025 to May 2026): built Vicktoria, an AI chat platform with an ID-based RAG API (FastAPI, LangChain, PostgreSQL/pgvector).
+- NYC Department of Environmental Protection, Summer Graduate Intern (from Jun 2025, New York): SQL, Power BI, Python.
+- New York University, Course Assistant (Jan 2025 to May 2025): open-source course development in Python and C++.
+- IDFC First Bank, Application Engineer (Mar 2022 to Aug 2024, Bengaluru): React and React Native apps impacting 20M customers; UPI and video KYC features; 97% unit test coverage; Grafana and Prometheus monitoring.
+- VIT Center of Advanced Data Science, Research Intern (Jul 2021 to Aug 2021, Chennai): explainable machine learning for water quality (90% accuracy, LIME and SHAP).
+- Premware Services India LLP, MEAN Stack Developer (Feb 2021 to Mar 2021, Surat): real-time backend for Surati Taxi.
+
+## Hackathons
+
+- Winner, Human Impact Track, NYC Spark Hack (Apr 2026, New York)
+- 3rd Place, GIDE Hackathon @ NYC Tech Week (Jun 2026, New York)
+- Top 6 Finalist, Cornell AI Hackathon (Feb 2025)
+
+## Publications
+
+- [Explainable AI Framework for Multi-label Classification using Supervised Machine Learning Models](https://ceur-ws.org/Vol-3283/Paper3b.pdf), CEUR Workshop Proceedings, Nov 2022
+- [Efficient Dynamic Phishing Safeguard System Using Neural Boost Phishing Protections](https://www.mdpi.com/2079-9292/11/19/3133), Electronics (MDPI), Sep 2022
+
+## Selected projects
+
+- Auto Safety: an AI tool that watches live NYC traffic cameras and forecasts street risk (Next.js 15, RAPIDS)
+- Shelclub: an editorial magazine platform with a writers' desk and an editor review workflow (Next.js 15, Payload CMS)
+- Efficient Hybrid Autoregressive Transformer: a faster HART text-to-image generation pipeline (PyTorch, CUDA)
+- Gradient Analysis for Edge Deployment: gradient statistics that guide pruning and gradient prediction (PyTorch)
+- Efficient Fine-Tuning of RoBERTa with LoRA (Python)
+- NYC MTA Ridership Dashboard: analytics and forecasting for 5+ years of NYC subway ridership (PySpark, Streamlit)
+
+## Education
+
+- New York University, Master of Science in Computer Engineering (Sep 2024 to May 2026, New York)
+- Vellore Institute of Technology, Bachelor of Technology in Computer Science (Jul 2018 to May 2022, Chennai)
+
+## Skills
+
+- Languages: Python, C++, Java, JavaScript, TypeScript, Bash, SQL
+- AI / ML: PyTorch, TensorFlow, Keras, Hugging Face Transformers, LLMs, RAG, computer vision, NLP, LoRA, pruning, quantization, distillation
+- Data and infrastructure: PySpark, Hadoop, MongoDB, PostgreSQL, AWS, GCP, Docker, Kubernetes, Linux, Git, CI/CD
+- Web and apps: React, React Native, Next.js, Node.js, FastAPI, Flask, Micronaut, Kafka
+
+## Links
+
+- GitHub: https://github.com/jaydaftari
+- LinkedIn: https://www.linkedin.com/in/jay-daftari/
+- Email: jd5829@nyu.edu
