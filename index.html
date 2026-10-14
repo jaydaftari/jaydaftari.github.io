@@ -625,7 +625,7 @@
 .pj-m.is-pinged{border-radius:12px}
 
 /* docked: one manifest + one dossier; fixed height, never scrolls the page */
-.pj.is-docked .pj-console{--pj-h:clamp(416px,calc(100vh - 208px),640px);--pj-idx:clamp(400px,52%,580px);--pj-gap:24px;--row:clamp(29px,calc(var(--pj-h) / 14),46px);position:relative;display:grid;grid-template-columns:var(--pj-idx) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:var(--pj-gap);height:var(--pj-h)}
+.pj.is-docked .pj-console{--pj-h:clamp(416px,calc(100vh - 208px),640px);--pj-idx:clamp(400px,52%,580px);--pj-gap:24px;--row:clamp(27px,calc(var(--pj-h) / var(--pj-n,15)),46px);position:relative;display:grid;grid-template-columns:var(--pj-idx) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:var(--pj-gap);height:var(--pj-h)}
 /* Dossier bodies are absolutely positioned against .pj-console. NEVER give .pj-list, .pj-item, .pj-m or .pj-h
    position, transform/translate, filter, contain or will-change, or every dossier will render inside its own row.
    (Animate the .pj-head buttons, never their ancestors. ?skills-debug warns if this breaks.) */
@@ -2503,8 +2503,12 @@ function startPortal(canvas, hero, reduce) {
     }
     var vh = window.innerHeight;
     sections.forEach(function (sec) {
-      var natural = sec._end.getBoundingClientRect().top - sec.getBoundingClientRect().top + (parseFloat(getComputedStyle(sec).paddingBottom) || 0) - (sec._transient ? sec._transient() : 0);
-      var target = Math.max(1, Math.ceil(natural / vh - 0.01)) * vh + 'px';
+      /* screens are counted by where the content ends, not its trailing margin and padding: whitespace
+         alone never earns a section another, empty screen */
+      var last = sec._end.previousElementSibling;
+      while (last && !last.getClientRects().length) last = last.previousElementSibling;
+      var ink = (last || sec._end).getBoundingClientRect()[last ? 'bottom' : 'top'] - sec.getBoundingClientRect().top - (sec._transient ? sec._transient() : 0);
+      var target = Math.max(1, Math.ceil(ink / vh - 0.01)) * vh + 'px';
       if (sec.style.minHeight !== target) sec.style.minHeight = target;
     });
   }
@@ -2771,6 +2775,7 @@ function startPortal(canvas, hero, reduce) {
     var sec = document.getElementById('projects');
     var con = root.querySelector('.pj-console'), dock = root.querySelector('.pj-dock');
     var arts = [].slice.call(root.querySelectorAll('.pj-m'));
+    con.style.setProperty('--pj-n', arts.length);   // the list's rows share the console's height, however many projects there are
     var chips = [].slice.call(root.querySelectorAll('.pj-chip'));
     var prev = root.querySelector('.pj-prev'), next = root.querySelector('.pj-next'), count = root.querySelector('.pj-count');
     var allBtn = root.querySelector('.pj-all'), resetW = root.querySelector('.pj-reset-w'), live = document.getElementById('pjLive');
