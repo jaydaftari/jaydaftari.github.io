@@ -43,7 +43,7 @@
   var PULL = 0.14;           // share of the screen height you pull before the film gives
   var LIGHT = norm3(-0.38, -0.52, 0.76);   // from the top left, in front of the screen
 
-  var enabledFlag = true, busy = false, queued = null, sheetSeq = 0;
+  var enabledFlag = true, busy = false, busyAt = 0, queued = null, sheetSeq = 0;
   var sheets = [], raf = 0, lastT = 0;
 
   function enabled() { return enabledFlag && wide.matches && !coarse.matches && !calm.matches; }
@@ -394,7 +394,7 @@
       dir: norm3(away[0] + across[0] * slant, away[1] + across[1] * slant, 0.3), s: 0, v: 0, t0: 0, done: -1,
       peel: auto ? [-away[0] * aDim * 0.05 - across[0] * side * cDim * 0.04, -away[1] * aDim * 0.05 - across[1] * side * cDim * 0.04, Math.min(W, H) * 0.2] : null
     };
-    this.free = auto; this.freeAt = 0; this.settled = false;
+    this.free = auto; this.freeAt = 0; this.settled = false; this.letAt = 0;
     this.solid = !!opt.solid;                     // indestructible: it stretches, never tears
     this.keep = opt.hand === 'still';             // a still cover stays until it's told to go
     /* stacking: a still cover lies under everything, a page being put back over everything, and
@@ -499,7 +499,7 @@
       h.k = Math.min(1, h.k + dt / 0.16);
       var e = 1 - Math.pow(1 - h.k, 3);
       h.tx = h.rx + (h.x - h.rx) * e; h.ty = h.ry + (h.y - h.ry) * e; h.tz = h.rz * (1 - e);
-      if (h.k >= 1) this.hand = h = null;
+      if (h.k >= 1) { this.hand = h = null; this.letAt = this.t; }
     }
 
     /* once the film gives, the tear runs along the perforation from the grabbed side: strands
@@ -551,16 +551,18 @@
       /* landed: snap the last fraction of a pixel so it lines up with the page exactly */
       var off = 0;
       for (k = 0; k < n * 3; k++) off = Math.max(off, Math.abs(home[k] - pos[k]));
-      if (this.t > 0.35 && off < 0.4) { pos.set(home); prev.set(home); this.settled = true; }
+      if ((this.t > 0.35 && off < 0.4) || this.t > 1.5) { pos.set(home); prev.set(home); this.settled = true; }
     } else if (!free) {
-      var hold = !!h, far = 0;
+      /* let go, it eases home, then firmly: film crumpled by a sudden yank can rest in a fold, and
+         the page stays locked until the sheet has settled */
+      var hold = !!h, far = 0, late = hold ? 0 : clamp01((this.t - this.letAt - 0.25) / 0.25);
       for (k = 0; k < n; k++) {
         if (!inv[k]) continue;
-        var q3 = k * 3, lift2 = hold ? clamp01(pos[q3 + 2] / 24) : 0, sp = 0.32 * (1 - lift2);
+        var q3 = k * 3, lift2 = hold ? clamp01(pos[q3 + 2] / 24) : 0, sp = hold ? 0.32 * (1 - lift2) : 0.32 + 0.68 * late;
         var mx = (home[q3] - pos[q3]) * sp, my = (home[q3 + 1] - pos[q3 + 1]) * sp;
         pos[q3] += mx; prev[q3] += mx; pos[q3 + 1] += my; prev[q3 + 1] += my;
         if (!hold) {
-          var mz = -pos[q3 + 2] * 0.3;
+          var mz = -pos[q3 + 2] * (0.3 + 0.7 * late);
           pos[q3 + 2] += mz; prev[q3 + 2] += mz;
           far = Math.max(far, Math.abs(home[q3] - pos[q3]), Math.abs(home[q3 + 1] - pos[q3 + 1]), pos[q3 + 2]);
         }
@@ -746,7 +748,17 @@
     sheets = [];
     if (layer) layer.style.display = 'none';
     busy = false;
-    root.classList.remove('is-tearing');
+    root.classList.remove('is-tearing', 'tear-solo');
+  }
+
+  /* the page only moves through here, so a move that never finishes (a frame that throws, a
+     snapshot that stalls) would lock it for good: past a long wait, the next input clears the
+     stage, and if the picture never came, the page goes back to plain scrolling */
+  function lock() { busy = true; busyAt = performance.now(); }
+  function unstick() {
+    if (!busy || hold || performance.now() - busyAt < 8000) return;
+    if (!sheets.length) off(new Error('snapshot stalled'));
+    clearAll();
   }
 
   function off(e) {
@@ -778,7 +790,7 @@
     if (busy) { queued = { y: y, dir: dir, x: grabX }; hurry(); return Promise.resolve(); }
     if (!ensureGL()) { fallback(y); return Promise.resolve(); }
     if (here() === last && y < scrollY()) return putBack(y);
-    busy = true;
+    lock();
     return capture().then(function (img) {
       return layDown(img, dir > 0 ? 'bottom' : 'top', { hand: 'auto', x: grabX == null ? 0 : grabX, y: vh() / 2 }, y, function () {
         busy = false;
@@ -805,7 +817,7 @@
      pad instead. The current page is held as a still picture, the page underneath moves to y and
      is photographed, and that picture drifts in from above and settles over it */
   function putBack(y) {
-    busy = true;
+    lock();
     var cover = null;
     return capture().then(function (img) {
       sizeLayer();
@@ -837,6 +849,7 @@
 
   /* in-page links to a page */
   document.addEventListener('click', function (e) {
+    unstick();
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !enabled()) return;
     var a = e.target.closest && e.target.closest('a[href^="#"]');
     if (!a) return;
@@ -882,6 +895,7 @@
     return false;
   }
   window.addEventListener('wheel', function (e) {
+    unstick();
     if (!enabled() || e.ctrlKey || e.defaultPrevented) return;
     /* gestures are timed by when the input happened, not when it's handled: while a page is being
        photographed the browser holds wheel events back, and a held-back momentum tail must not
@@ -908,6 +922,7 @@
   /* keys: Down, Page Down and Space tear on; Up, Page Up and Shift+Space turn back; Home and End go
      to the ends */
   window.addEventListener('keydown', function (e) {
+    unstick();
     if (!enabled() || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
     var el = document.activeElement;
     if (el && el !== document.body && el !== root && el.tagName !== 'A') return;
@@ -937,6 +952,7 @@
   var hold = null;
 
   document.addEventListener('pointerdown', function (e) {
+    unstick();
     if (!enabled() || busy || e.button !== 0 || e.metaKey || e.ctrlKey || !e.isPrimary) return;
     if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
     if (!(hero.contains(e.target) || main.contains(e.target)) || (e.target.closest && e.target.closest(NOGRAB))) return;
@@ -971,7 +987,7 @@
     g.solid = target == null;
     g.origin = scrollY();
     g.target = target;
-    busy = true;
+    lock();
     root.classList.add('is-tearing');
     /* nothing to reveal: lifting the film shows the bare pad, not a second copy of the page */
     if (g.solid) root.classList.add('tear-solo');
@@ -1088,6 +1104,7 @@
   window.pageTear = {
     /* returns true when it took over the scroll to y */
     to: function (y) {
+      unstick();
       if (!enabled()) return false;
       tearTo(y, y > scrollY() ? 1 : -1, vw());
       return true;
