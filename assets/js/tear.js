@@ -862,15 +862,25 @@
   });
 
   /* ---------- where the page rests ---------- */
+  /* where a page's content ends: a page sized up to whole screens can end in empty space, and a stop
+     there would show a blank screen */
+  function inkBottom(i) {
+    var el = pages[i].lastElementChild;
+    while (el && (el.classList.contains('sec-end') || !el.getClientRects().length)) el = el.previousElementSibling;
+    return el ? el.getBoundingClientRect().bottom + scrollY() : bounds(i).bottom;
+  }
   /* The page never scrolls by itself; it only rests at stops. Every page's top is one, and a page
      taller than the screen (on a short screen) has more, a screen at a time down to its end.
      Going on to the next stop is always a tear; going back to the previous one is a page turn. */
   function stops() {
     var H = vh(), max = Math.max(0, root.scrollHeight - H), out = [];
     pages.forEach(function (p, i) {
-      var b = bounds(i), top = Math.min(max, b.top), end = Math.min(max, b.bottom - H);
+      var b = bounds(i), top = Math.min(max, b.top);
+      /* the last stop shows the end of the content with a little room below it, never the blank
+         remainder of the page */
+      var end = Math.min(max, b.bottom - H, inkBottom(i) + 24 - H);
       out.push(top);
-      if (end > top + H * 0.15) {           // a sliver that's mostly padding isn't worth a stop of its own
+      if (end > top + 48) {             // content more than a hair past the fold earns a stop
         var n = Math.max(1, Math.ceil((end - top) / H));
         for (var k = 1; k <= n; k++) out.push(top + (end - top) * k / n);
       }
