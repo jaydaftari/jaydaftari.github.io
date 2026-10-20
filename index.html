@@ -46,7 +46,7 @@
       "url": "https://jaydaftari.github.io/",
       "name": "Jay Daftari — Gen AI Engineer",
       "isPartOf": { "@id": "https://jaydaftari.github.io/#website" },
-      "dateModified": "2026-10-14T15:27:57-04:00",
+      "dateModified": "2026-10-20T00:10:00-04:00",
       "mainEntity": { "@id": "https://jaydaftari.github.io/#person" }
     },
     {
@@ -1189,19 +1189,23 @@
           <div class="card-content">
             <div class="row">
               <div class="col s12 m2">
-                <img alt="Lina Law logo" src="/assets/img/exp-lina-logo.png" class="responsive-img center-block" />
+                <a href="https://www.lina.law/en" target="_blank"><img alt="Lina Law logo"
+                    src="/assets/img/exp-lina-logo.png" class="responsive-img center-block" /></a>
               </div>
               <div class="col s12 m10">
                 <p>
-                  <span class="card-title"><span class="teal-text">Lina Law</span></span>
+                  <span class="card-title"><a href="https://www.lina.law/en" target="_blank"
+                      class="teal-text hoverline">Lina Law</a></span>
                 </p>
               </div>
             </div>
             <div class="role brown-text text-darken-2">Gen AI Engineer</div>
             <ul>
-              <li>Owned end-to-end feature development across a Next.js/React, TypeScript, Python, and PostgreSQL (Supabase) stack, building agentic AI workflows that reduced legal drafting and review cycles from weeks to a couple of hours.</li>
-              <li>Built a real-time collaborative document editing system with concurrency support and Claude integration, enabling lawyers to co-draft, edit, and review legal documents with AI directly in the browser.</li>
-              <li>Independently identified and built LLM-agent observability tooling with no existing pattern to follow, reconstructing each run’s reasoning and tool calls from an append-only event log to make agent behavior legible to non-technical teammates.</li>
+              <li>Built Claude agents and an MCP server with 60+ tools that read client emails and case files, then draft and review contracts on the firm’s own Word templates, cutting turnaround from weeks to hours.</li>
+              <li>Built a real-time collaborative document editing system with concurrency support and Claude integration, enabling lawyers to co-draft, edit, and review legal documents with AI directly in the browser, used daily by the firm’s lawyers.</li>
+              <li>Made every client document readable by the AI: added OCR for scanned PDFs (Mistral OCR on Vertex AI) and moved uploads straight to cloud storage, raising the file size limit from 32 MB to 300 MB and fixing bulk uploads that failed when run in parallel.</li>
+              <li>Built agent observability tooling that replays each AI run step by step (its reasoning and every tool call), making every AI action auditable by non-technical teammates.</li>
+              <li><b>Tools:</b> Python, TypeScript, Next.js/React, PostgreSQL (Supabase), Claude, MCP</li>
             </ul>
           </div>
           <div class="card-action">
@@ -1225,8 +1229,10 @@
             </div>
             <div class="role brown-text text-darken-2">Gen AI Engineer</div>
             <ul>
-              <li>Picked up FastAPI and GCP from scratch to build AI agent pipelines with retrieval and multi-model routing (GPT-4o, Claude, Gemini), becoming productive in an unfamiliar stack within weeks.</li>
-              <li>Worked on Nora, Wequity’s legal AI platform.</li>
+              <li>Built Nora’s Smart Drafting engine on Claude Opus 4.6 (GPT-5.4 and Gemini 2.5 Pro fallbacks), auto-filling legal templates from client files with a cited source for every field, so lawyers verify answers instead of re-reading documents.</li>
+              <li>Hardened the drafting pipeline (FastAPI, Cloud Run) with parallel extraction, per-file failure isolation and Slack alerts, so one bad upload no longer fails an entire draft.</li>
+              <li>Cut first paint by 80% (12.2s to 2.4s) and raised Nora’s Lighthouse performance score from 55 to 68 by reworking startup loading; fixed Postgres bloat by moving to UUIDv7 keys and dropping 34 unused indexes.</li>
+              <li><b>Tools:</b> Python, FastAPI, TypeScript, React, PostgreSQL (Supabase), GCP Cloud Run, Docker</li>
             </ul>
           </div>
           <div class="card-action">
@@ -1244,18 +1250,21 @@
               <div class="col s12 m10">
                 <p>
                   <span class="card-title"><a href="https://vicktoria.ai" target="_blank"
-                      class="teal-text hoverline">Vicktoria</a></span>
+                      class="teal-text hoverline">Vicktoria AI</a></span>
                 </p>
               </div>
             </div>
-            <div class="role brown-text text-darken-2">Software Engineer</div>
+            <div class="role brown-text text-darken-2">Gen AI Engineer</div>
             <ul>
-              <li>Built Vicktoria, an AI chat platform with an ID-based RAG API (FastAPI, LangChain, PostgreSQL/pgvector) for file-level document retrieval.</li>
+              <li>Launched vicka.ai, a chat and voice AI coach, self-hosting fine tuned model with vLLM on RunPod GPUs; it activates only 4B parameters per token, so it runs on rented GPUs with no per-token API fees.</li>
+              <li>Built the retrieval-augmented generation (RAG) pipeline that bases every answer on the founder’s methodology (BGE embeddings, pgvector); re-indexing loads new files before deleting old ones, so answers never lose their sources during updates.</li>
+              <li>Built a hands-free voice mode (speech-to-text, llm, then text-to-speech) that starts speaking as soon as the first sentence is ready, using self-hosted Kokoro TTS (Python, FastAPI) and ElevenLabs; added camera and photo input that resizes images to 768x768 in the browser for vision model.</li>
+              <li>Automated deployment with GitHub Actions: every merge to main builds a Docker image and rolls it out to AWS EC2 through OIDC and SSM, with no SSH keys or stored AWS credentials; prototyped a talking-avatar service on Modal H100 GPUs that costs nothing when idle and an estimated $0.05–0.20 per reply.</li>
               <li><b>Tools:</b> Node.js, React, Python, FastAPI, LangChain, PostgreSQL, Docker</li>
             </ul>
           </div>
           <div class="card-action">
-            <span>Nov 2025 - May 2026</span>
+            <span>Sep 2025 - Apr 2026 | New York City, New York</span>
           </div>
         </div>
 
@@ -1273,15 +1282,16 @@
                 </p>
               </div>
             </div>
-            <div class="role brown-text text-darken-2">Summer Graduate Intern</div>
+            <div class="role brown-text text-darken-2">Summer Graduate Intern / Data Scientist Intern / Software Engineer Intern</div>
             <ul>
-               <li> <b>Tools:</b> SQL, Power BI, Python
-              </li>
-              <li> Working in ACCO department </li>
+              <li>Developed and re-engineered enterprise-level applications supporting NYC DEP’s contracts, procurements, and payment systems, valued at over $3 billion in transactions annually, using Web Services, jQuery, ASP.NET, and VB.NET.</li>
+              <li>Utilized MS SQL Server, Python, Power BI, DAX Studio, and Report Viewer to implement end-to-end ETL processes supporting NYC DEP’s contract, procurement, and payment systems, managing over $3 billion in transactions annually.</li>
+              <li>Utilized MS SQL Server, Python, Excel, Power BI, DAX Studio, and Report Viewer for end-to-end ETL processes.</li>
+              <li><b>Tools:</b> SQL, Power BI, Python</li>
             </ul>
           </div>
           <div class="card-action">
-            <span>Jun 2025 - Present | New York, USA</span>
+            <span>Jun 2025 - Aug 2025 | New York City, New York</span>
           </div>
         </div>
 
@@ -3107,9 +3117,9 @@ function startPortal(canvas, hero, reduce) {
     // quote is still in that card's text. "confirm" pairs are inferences, hidden until approved.
     var CONFIRMED = {};
     var SRC = {
-      'exp-lina': { t: 'Lina Law', ev: { python: 'Python', typescript: 'TypeScript', react: 'Next.js/React', nextjs: 'Next.js', postgresql: 'PostgreSQL', llms: 'LLM-agent' } },
-      'exp-wequity': { t: 'Wequity', ev: { fastapi: 'FastAPI', gcp: 'GCP' }, confirm: { llms: 'GPT-4o, Claude, Gemini', rag: 'retrieval' } },
-      'exp-vicktoria': { t: 'Vicktoria', ev: { nodejs: 'Node.js', react: 'React', python: 'Python', fastapi: 'FastAPI', postgresql: 'PostgreSQL', docker: 'Docker', rag: 'RAG API' } },
+      'exp-lina': { t: 'Lina Law', ev: { python: 'Python', typescript: 'TypeScript', react: 'Next.js/React', nextjs: 'Next.js', postgresql: 'PostgreSQL', llms: 'Claude agents', gcp: 'Vertex AI' } },
+      'exp-wequity': { t: 'Wequity', ev: { python: 'Python', fastapi: 'FastAPI', typescript: 'TypeScript', react: 'React', postgresql: 'PostgreSQL', gcp: 'GCP', docker: 'Docker', llms: 'Claude Opus 4.6' } },
+      'exp-vicktoria': { t: 'Vicktoria AI', ev: { nodejs: 'Node.js', react: 'React', python: 'Python', fastapi: 'FastAPI', postgresql: 'PostgreSQL', docker: 'Docker', aws: 'AWS EC2', cicd: 'GitHub Actions', llms: 'vLLM', rag: 'RAG' } },
       'exp-dep': { t: 'NYC DEP', ev: { sql: 'SQL', python: 'Python' } },
       'exp-nyu': { t: 'NYU (Course Assistant)', ev: { git: 'Git', c: 'C/C++', cpp: 'C/C++', python: 'python', cicd: '(CI/CD)' } },
       'exp-idfc': { t: 'IDFC First Bank', ev: { react: 'React Js', reactnative: 'React Native', java: 'Java Micronaut', micronaut: 'Micronaut', kafka: 'Kafka', kubernetes: 'kubernetes', docker: 'Docker' }, confirm: { cicd: 'GoCD' } },
