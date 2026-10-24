@@ -3,23 +3,30 @@
 > Jay Daftari is a computer scientist and Gen AI engineer trained in AI and machine learning at New York University (MS, Computer Engineering). Jay builds agentic AI systems, retrieval-augmented generation (RAG) pipelines and LLM tooling, most recently for legal teams at Lina Law and Wequity.
 
 Portfolio: https://jaydaftari.github.io/
+Location: New York, NY, USA
+Last updated: 2026-10-20
 
 ## Experience
 
-- Lina Law, Gen AI Engineer (May 2026 to Oct 2026, remote): built Claude agents and an MCP server with 60+ tools that read client emails and case files, then draft and review contracts on the firm's own Word templates, cutting turnaround from weeks to hours; built a real-time collaborative document editing system with concurrency support and Claude integration, used daily by the firm's lawyers; added OCR for scanned PDFs (Mistral OCR on Vertex AI) and moved uploads straight to cloud storage, raising the file size limit from 32 MB to 300 MB; built agent observability tooling that replays each AI run step by step (its reasoning and every tool call).
-- Wequity, Gen AI Engineer (Feb 2026 to May 2026, remote): built Nora's Smart Drafting engine on Claude Opus 4.6 (GPT-5.4 and Gemini 2.5 Pro fallbacks), auto-filling legal templates from client files with a cited source for every field; hardened the drafting pipeline (FastAPI, Cloud Run) with parallel extraction, per-file failure isolation and Slack alerts; cut first paint by 80% (12.2s to 2.4s) and raised Nora's Lighthouse performance score from 55 to 68; fixed Postgres bloat by moving to UUIDv7 keys and dropping 34 unused indexes.
-- Vicktoria AI, Gen AI Engineer (Sep 2025 to Apr 2026, New York City): launched vicka.ai, a chat and voice AI coach, self-hosting a fine tuned model with vLLM on RunPod GPUs that activates only 4B parameters per token; built the RAG pipeline that bases every answer on the founder's methodology (BGE embeddings, pgvector); built a hands-free voice mode with self-hosted Kokoro TTS (Python, FastAPI) and ElevenLabs; automated deployment with GitHub Actions to AWS EC2 through OIDC and SSM; prototyped a talking-avatar service on Modal H100 GPUs.
-- NYC Department of Environmental Protection, Summer Graduate Intern (Jun 2025 to Aug 2025, New York City): developed and re-engineered enterprise-level applications supporting NYC DEP's contracts, procurements, and payment systems, valued at over $3 billion in transactions annually, using Web Services, jQuery, ASP.NET, and VB.NET; implemented end-to-end ETL processes with MS SQL Server, Python, Power BI, DAX Studio, and Report Viewer.
-- New York University, Course Assistant (Jan 2025 to May 2025): open-source course development in Python and C++.
-- IDFC First Bank, Application Engineer (Mar 2022 to Aug 2024, Bengaluru): React and React Native apps impacting 20M customers; UPI and video KYC features; 97% unit test coverage; Grafana and Prometheus monitoring.
-- VIT Center of Advanced Data Science, Research Intern (Jul 2021 to Aug 2021, Chennai): explainable machine learning for water quality (90% accuracy, LIME and SHAP).
-- Premware Services India LLP, MEAN Stack Developer (Feb 2021 to Mar 2021, Surat): real-time backend for Surati Taxi.
+- [Lina Law](https://www.lina.law/en), Gen AI Engineer (May 2026 to Oct 2026, remote): built Claude agents and an MCP server with 60+ tools that read client emails and case files, then draft and review contracts on the firm's own Word templates, cutting turnaround from weeks to hours; built a real-time collaborative document editing system with concurrency support and Claude integration, used daily by the firm's lawyers; added OCR for scanned PDFs (Mistral OCR on Vertex AI) and moved uploads straight to cloud storage, raising the file size limit from 32 MB to 300 MB; built agent observability tooling that replays each AI run step by step (its reasoning and every tool call).
+- [Wequity](https://app.nora.legal), Gen AI Engineer (Feb 2026 to May 2026, remote): built Nora's Smart Drafting engine on Claude Opus 4.6 (GPT-5.4 and Gemini 2.5 Pro fallbacks), auto-filling legal templates from client files with a cited source for every field; hardened the drafting pipeline (FastAPI, Cloud Run) with parallel extraction, per-file failure isolation and Slack alerts; cut first paint by 80% (12.2s to 2.4s) and raised Nora's Lighthouse performance score from 55 to 68; fixed Postgres bloat by moving to UUIDv7 keys and dropping 34 unused indexes.
+- [Vicktoria AI](https://vicktoria.ai), Gen AI Engineer (Sep 2025 to Apr 2026, New York City): launched vicka.ai, a chat and voice AI coach, self-hosting a fine tuned model with vLLM on RunPod GPUs that activates only 4B parameters per token; built the RAG pipeline that bases every answer on the founder's methodology (BGE embeddings, pgvector); built a hands-free voice mode with self-hosted Kokoro TTS (Python, FastAPI) and ElevenLabs; automated deployment with GitHub Actions to AWS EC2 through OIDC and SSM; prototyped a talking-avatar service on Modal H100 GPUs.
+- [NYC Department of Environmental Protection](https://www.nyc.gov/site/dep/index.page), Summer Graduate Intern (Jun 2025 to Aug 2025, New York City): developed and re-engineered enterprise-level applications supporting NYC DEP's contracts, procurements, and payment systems, valued at over $3 billion in transactions annually, using Web Services, jQuery, ASP.NET, and VB.NET; implemented end-to-end ETL processes with MS SQL Server, Python, Power BI, DAX Studio, and Report Viewer.
+- [New York University](https://engineering.nyu.edu/), Course Assistant (Jan 2025 to May 2025): open-source course development in Python and C++.
+- [IDFC First Bank](https://www.idfcfirstbank.com), Application Engineer (Mar 2022 to Aug 2024, Bengaluru): React and React Native apps impacting 20M customers; UPI and video KYC features; 97% unit test coverage; Grafana and Prometheus monitoring.
+- [VIT Center of Advanced Data Science](https://chennai.vit.ac.in/research/research-centre/centre-for-advanced-data-science/), Research Intern (Jul 2021 to Aug 2021, Chennai): explainable machine learning for water quality (90% accuracy, LIME and SHAP).
+- [Premware Services India LLP](https://premware.services/), MEAN Stack Developer (Feb 2021 to Mar 2021, Surat): real-time backend for Surati Taxi.
 
 ## Hackathons
 
 - Winner, Human Impact Track, NYC Spark Hack (Apr 2026, New York)
 - 3rd Place, GIDE Hackathon @ NYC Tech Week (Jun 2026, New York)
 - Top 6 Finalist, Cornell AI Hackathon (Feb 2025)
+
+## Open source
+
+- [lastmile-ai/mcp-agent](https://github.com/lastmile-ai/mcp-agent) (Nov 2025): 2 merged PRs, including #608, a lightweight bootstrap entry point that shows a progress indicator while heavy imports load
+- [hart-v2](https://github.com/siddhantmohan1110/hart-v2) (Oct 2025): 2 merged PRs
 
 ## Publications
 
@@ -28,18 +35,19 @@ Portfolio: https://jaydaftari.github.io/
 
 ## Selected projects
 
-- Auto Safety: an AI tool that watches live NYC traffic cameras and forecasts street risk (Next.js 15, RAPIDS)
-- MyNextDate (Hacklytics 2026, team of four): a date planner that scores dates with an LLM (Llama 3.1 on Groq) and recommends the next one by vector similarity search (React, FastAPI, Actian Vector AI DB); https://devpost.com/software/mynextdate
-- Shelclub: an editorial magazine platform with a writers' desk and an editor review workflow (Next.js 15, Payload CMS)
-- Efficient Hybrid Autoregressive Transformer: a faster HART text-to-image generation pipeline (PyTorch, CUDA)
-- Gradient Analysis for Edge Deployment: gradient statistics that guide pruning and gradient prediction (PyTorch)
-- Efficient Fine-Tuning of RoBERTa with LoRA (Python)
-- NYC MTA Ridership Dashboard: analytics and forecasting for 5+ years of NYC subway ridership (PySpark, Streamlit)
+- [Auto Safety](https://github.com/jaydaftari/person-of-interest): an AI tool that watches live NYC traffic cameras and forecasts street risk (Next.js 15, RAPIDS)
+- [MyNextDate](https://devpost.com/software/mynextdate) (Hacklytics 2026, team of four): a date planner that scores dates with an LLM (Llama 3.1 on Groq) and recommends the next one by vector similarity search (React, FastAPI, Actian Vector AI DB)
+- [ML-Optimized Ad Blocker](https://github.com/jaydaftari/LLM-Based-AdBlocker) (co-built): a self-learning ad-blocking proxy that classifies new domains with an LLM (Llama 3.1 8B on Groq) and caches each verdict in a trie for microsecond lookups (Python, mitmproxy)
+- [Shelclub](https://shelclub.vercel.app/): an editorial magazine platform with a writers' desk and an editor review workflow (Next.js 15, Payload CMS)
+- [Efficient Hybrid Autoregressive Transformer](https://github.com/jaydaftari/hart-v2): a faster HART text-to-image generation pipeline (PyTorch, CUDA)
+- [Gradient Analysis for Edge Deployment](https://github.com/jaydaftari/EfficientAI_Project): gradient statistics that guide pruning and gradient prediction (PyTorch)
+- [Efficient Fine-Tuning of RoBERTa with LoRA](https://github.com/jaydaftari/DeepLearningProject2) (Python)
+- [NYC MTA Ridership Dashboard](https://github.com/jaydaftari/CSGY-6513-Big-Data-Finals-Project): analytics and forecasting for 5+ years of NYC subway ridership (PySpark, Streamlit)
 
 ## Education
 
-- New York University, Master of Science in Computer Engineering (Sep 2024 to May 2026, New York)
-- Vellore Institute of Technology, Bachelor of Technology in Computer Science (Jul 2018 to May 2022, Chennai)
+- [New York University](https://engineering.nyu.edu/), Master of Science in Computer Engineering (Sep 2024 to May 2026, New York)
+- [Vellore Institute of Technology](https://chennai.vit.ac.in/), Bachelor of Technology in Computer Science (Jul 2018 to May 2022, Chennai)
 
 ## Skills
 
@@ -50,6 +58,6 @@ Portfolio: https://jaydaftari.github.io/
 
 ## Links
 
-- GitHub: https://github.com/jaydaftari
-- LinkedIn: https://www.linkedin.com/in/jay-daftari/
-- Email: jd5829@nyu.edu
+- [GitHub](https://github.com/jaydaftari)
+- [LinkedIn](https://www.linkedin.com/in/jay-daftari/)
+- [Email](mailto:jd5829@nyu.edu): jd5829@nyu.edu
