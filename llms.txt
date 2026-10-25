@@ -4,7 +4,7 @@
 
 Portfolio: https://jaydaftari.github.io/
 Location: New York, NY, USA
-Last updated: 2026-10-20
+Last updated: 2026-10-25
 
 ## Experience
 
@@ -25,6 +25,7 @@ Last updated: 2026-10-20
 
 ## Open source
 
+- [selimfirat/pysad](https://github.com/selimfirat/pysad) (Oct 2026): 1 merged PR, #408, completing the type annotations of the pysad.transform.ensemble subpackage and adding it to mypy's enforced list
 - [lastmile-ai/mcp-agent](https://github.com/lastmile-ai/mcp-agent) (Nov 2025): 2 merged PRs, including #608, a lightweight bootstrap entry point that shows a progress indicator while heavy imports load
 - [hart-v2](https://github.com/siddhantmohan1110/hart-v2) (Oct 2025): 2 merged PRs
 
