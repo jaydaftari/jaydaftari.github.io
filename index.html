@@ -1230,9 +1230,9 @@
             </div>
             <div class="role brown-text text-darken-2">Gen AI Engineer</div>
             <ul>
-              <li>Built Claude agents and an MCP server with 60+ tools that read client emails and case files, then draft and review contracts on the firm’s own Word templates, cutting turnaround from weeks to hours.</li>
-              <li>Built a real-time collaborative document editing system with concurrency support and Claude integration, enabling lawyers to co-draft, edit, and review legal documents with AI directly in the browser, used daily by the firm’s lawyers.</li>
-              <li>Made every client document readable by the AI: added OCR for scanned PDFs (Mistral OCR on Vertex AI) and moved uploads straight to cloud storage, raising the file size limit from 32 MB to 300 MB and fixing bulk uploads that failed when run in parallel.</li>
+              <li>Architected an MCP server with 60+ tools to read client emails, access case files, draft and review contracts using the firm’s own Word templates, cutting turnaround from weeks to hours.</li>
+              <li>Orchestrated Claude-managed agent integration with a real-time collaborative legal document editor supporting concurrency for drafting, editing, and review, used daily by the firm’s lawyers.</li>
+              <li>Led a Slack integration automating client intake, quoting, and initial drafts with AI agents, enabling the firm to handle high-volume requests without adding headcount while maintaining lawyer approval for every deliverable.</li>
               <li>Built agent observability tooling that replays each AI run step by step (its reasoning and every tool call), making every AI action auditable by non-technical teammates.</li>
               <li><b>Tools:</b> Python, TypeScript, Next.js/React, PostgreSQL (Supabase), Claude, MCP</li>
             </ul>
@@ -1285,10 +1285,12 @@
             </div>
             <div class="role brown-text text-darken-2">Gen AI Engineer</div>
             <ul>
-              <li>Launched vicka.ai, a chat and voice AI coach, self-hosting fine tuned model with vLLM on RunPod GPUs; it activates only 4B parameters per token, so it runs on rented GPUs with no per-token API fees.</li>
-              <li>Built the retrieval-augmented generation (RAG) pipeline that bases every answer on the founder’s methodology (BGE embeddings, pgvector); re-indexing loads new files before deleting old ones, so answers never lose their sources during updates.</li>
-              <li>Built a hands-free voice mode (speech-to-text, llm, then text-to-speech) that starts speaking as soon as the first sentence is ready, using self-hosted Kokoro TTS (Python, FastAPI) and ElevenLabs; added camera and photo input that resizes images to 768x768 in the browser for vision model.</li>
-              <li>Automated deployment with GitHub Actions: every merge to main builds a Docker image and rolls it out to AWS EC2 through OIDC and SSM, with no SSH keys or stored AWS credentials; prototyped a talking-avatar service on Modal H100 GPUs that costs nothing when idle and an estimated $0.05–0.20 per reply.</li>
+              <li>Launched vicka.ai, a chat and voice AI coach, deploying a fine-tuned Mixture-of-Experts model with vLLM on RunPod GPUs, activating only 4B parameters per token and eliminating per-token API fees through self-hosted inference.</li>
+              <li>Led the development of a retrieval-augmented generation (RAG) pipeline grounding responses in the founder’s methodology using BGE embeddings and pgvector, with zero-downtime re-indexing to maintain source availability during updates.</li>
+              <li>Engineered a hands-free voice pipeline integrating speech-to-text, LLM inference, and self-hosted Kokoro TTS (Python, FastAPI), reducing perceived latency through sentence-level streaming playback.</li>
+              <li>Integrated real-time camera and photo inputs for multimodal AI interactions, implementing browser-side image resizing to 768×768 for vision model inference.</li>
+              <li>Automated CI/CD with GitHub Actions, building Docker images and deploying to AWS EC2 on every merge to main via OIDC and SSM, eliminating SSH keys and stored AWS credentials.</li>
+              <li>Prototyped a talking-avatar service on Modal H100 GPUs with scale-to-zero inference, eliminating idle compute costs and achieving an estimated $0.05–$0.20 per reply.</li>
               <li><b>Tools:</b> Node.js, React, Python, FastAPI, LangChain, PostgreSQL, Docker</li>
             </ul>
           </div>
@@ -1313,9 +1315,8 @@
             </div>
             <div class="role brown-text text-darken-2">Summer Graduate Intern</div>
             <ul>
-              <li>Developed and re-engineered enterprise-level applications supporting NYC DEP’s contracts, procurements, and payment systems, valued at over $3 billion in transactions annually, using Web Services, jQuery, ASP.NET, and VB.NET.</li>
-              <li>Utilized MS SQL Server, Python, Power BI, DAX Studio, and Report Viewer to implement end-to-end ETL processes supporting NYC DEP’s contract, procurement, and payment systems, managing over $3 billion in transactions annually.</li>
-              <li>Utilized MS SQL Server, Python, Excel, Power BI, DAX Studio, and Report Viewer for end-to-end ETL processes.</li>
+              <li>Re-engineered public-sector enterprise applications supporting contracts, procurement, and payment systems handling over $3 billion in annual transactions using Web Services, jQuery, ASP.NET, and VB.NET.</li>
+              <li>Utilized MS SQL Server, Python, Excel, Power BI, DAX Studio, and Report Viewer for end-to-end ETL processes, data analysis, and enterprise reporting.</li>
               <li><b>Tools:</b> SQL, Power BI, Python</li>
             </ul>
           </div>
@@ -3195,7 +3196,7 @@ function startPortal(canvas, hero, reduce) {
     // quote is still in that card's text. "confirm" pairs are inferences, hidden until approved.
     var CONFIRMED = {};
     var SRC = {
-      'exp-lina': { t: 'Lina Law', ev: { python: 'Python', typescript: 'TypeScript', react: 'Next.js/React', nextjs: 'Next.js', postgresql: 'PostgreSQL', llms: 'Claude agents', gcp: 'Vertex AI' } },
+      'exp-lina': { t: 'Lina Law', ev: { python: 'Python', typescript: 'TypeScript', react: 'Next.js/React', nextjs: 'Next.js', postgresql: 'PostgreSQL', llms: 'Claude-managed agent' } },
       'exp-wequity': { t: 'Wequity', ev: { python: 'Python', fastapi: 'FastAPI', typescript: 'TypeScript', react: 'React', postgresql: 'PostgreSQL', gcp: 'GCP', docker: 'Docker', llms: 'Claude Opus 4.6' } },
       'exp-vicktoria': { t: 'Vicktoria AI', ev: { nodejs: 'Node.js', react: 'React', python: 'Python', fastapi: 'FastAPI', postgresql: 'PostgreSQL', docker: 'Docker', aws: 'AWS EC2', cicd: 'GitHub Actions', llms: 'vLLM', rag: 'RAG' } },
       'exp-dep': { t: 'NYC DEP', ev: { sql: 'SQL', python: 'Python' } },
