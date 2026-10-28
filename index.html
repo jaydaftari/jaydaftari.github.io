@@ -62,8 +62,8 @@
         { "@type": "CollegeOrUniversity", "name": "New York University", "url": "https://engineering.nyu.edu/" },
         { "@type": "CollegeOrUniversity", "name": "Vellore Institute of Technology, Chennai", "url": "https://chennai.vit.ac.in/" },
         {"@type": "OrganizationRole", "roleName": "Forward Deployed Engineer", "startDate": "2026-05", "endDate": "2026-10", "alumniOf": {"@type": "Organization", "name": "Lina Law", "url": "https://www.lina.law/en"}},
-        {"@type": "OrganizationRole", "roleName": "Gen AI Engineer", "startDate": "2026-02", "endDate": "2026-05", "alumniOf": {"@type": "Organization", "name": "Wequity", "url": "https://app.nora.legal"}},
-        {"@type": "OrganizationRole", "roleName": "Gen AI Engineer", "startDate": "2025-09", "endDate": "2026-04", "alumniOf": {"@type": "Organization", "name": "Vicktoria AI", "url": "https://vicktoria.ai"}},
+        {"@type": "OrganizationRole", "roleName": "AI Engineer", "startDate": "2026-02", "endDate": "2026-05", "alumniOf": {"@type": "Organization", "name": "Wequity", "url": "https://app.nora.legal"}},
+        {"@type": "OrganizationRole", "roleName": "Founding Engineer", "startDate": "2025-09", "endDate": "2026-04", "alumniOf": {"@type": "Organization", "name": "Vicktoria AI", "url": "https://vicktoria.ai"}},
         {"@type": "OrganizationRole", "roleName": "Summer Graduate Intern", "startDate": "2025-06", "endDate": "2025-08", "alumniOf": {"@type": "GovernmentOrganization", "name": "NYC Department of Environmental Protection", "url": "https://www.nyc.gov/site/dep/index.page"}},
         {"@type": "OrganizationRole", "roleName": "Course Assistant", "startDate": "2025-01", "endDate": "2025-05", "alumniOf": {"@type": "CollegeOrUniversity", "name": "New York University", "url": "https://engineering.nyu.edu/"}},
         {"@type": "OrganizationRole", "roleName": "Application Engineer", "startDate": "2022-03", "endDate": "2024-08", "alumniOf": {"@type": "Organization", "name": "IDFC First Bank", "url": "https://www.idfcfirstbank.com"}},
@@ -1234,7 +1234,7 @@
               <li>Orchestrated Claude-managed agent integration with a real-time collaborative legal document editor supporting concurrency for drafting, editing, and review, used daily by the firm’s lawyers.</li>
               <li>Led a Slack integration automating client intake, quoting, and initial drafts with AI agents, enabling the firm to handle high-volume requests without adding headcount while maintaining lawyer approval for every deliverable.</li>
               <li>Built agent observability tooling that replays each AI run step by step (its reasoning and every tool call), making every AI action auditable by non-technical teammates.</li>
-              <li>Led the development of a GDPR-aligned PII redaction pipeline integrating rule-based detection, LLM-assisted redaction, lawyer-in-the-loop review, and pre-inference pseudonymization, enabling secure AI adoption for confidential legal matters.</li>
+              <li>Engineered a GDPR-aligned PII redaction pipeline integrating rule-based detection, LLM-assisted redaction, lawyer-in-the-loop review, and pre-inference pseudonymization, enabling secure AI adoption for confidential legal matters.</li>
               <li><b>Tools:</b> Python, TypeScript, Next.js/React, PostgreSQL (Supabase), Claude, MCP</li>
             </ul>
           </div>
@@ -1257,7 +1257,7 @@
                 </p>
               </div>
             </div>
-            <div class="role brown-text text-darken-2">Gen AI Engineer</div>
+            <div class="role brown-text text-darken-2">AI Engineer</div>
             <ul>
               <li>Built Nora’s Smart Drafting engine on Claude Opus 4.6 (GPT-5.4 and Gemini 2.5 Pro fallbacks), auto-filling legal templates from client files with a cited source for every field, so lawyers verify answers instead of re-reading documents.</li>
               <li>Hardened the drafting pipeline (FastAPI, Cloud Run) with parallel extraction, per-file failure isolation and Slack alerts, so one bad upload no longer fails an entire draft.</li>
@@ -1284,7 +1284,7 @@
                 </p>
               </div>
             </div>
-            <div class="role brown-text text-darken-2">Gen AI Engineer</div>
+            <div class="role brown-text text-darken-2">Founding Engineer</div>
             <ul>
               <li>Launched vicka.ai, a chat and voice AI coach, deploying a fine-tuned Mixture-of-Experts model with vLLM on RunPod GPUs, activating only 4B parameters per token and eliminating per-token API fees through self-hosted inference.</li>
               <li>Led the development of a retrieval-augmented generation (RAG) pipeline grounding responses in the founder’s methodology using BGE embeddings and pgvector, with zero-downtime re-indexing to maintain source availability during updates.</li>
