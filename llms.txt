@@ -4,7 +4,7 @@
 
 Portfolio: https://jaydaftari.github.io/
 Location: New York, NY, USA
-Last updated: 2026-10-27
+Last updated: 2026-10-30
 
 ## Experience
 
@@ -36,6 +36,7 @@ Last updated: 2026-10-27
 
 ## Selected projects
 
+- [Savant](https://savant-green.vercel.app/): a private AI drive that gathers every account you use into one memory, for any AI you choose (Next.js 16, Three.js)
 - [Auto Safety](https://github.com/jaydaftari/person-of-interest): an AI tool that watches live NYC traffic cameras and forecasts street risk (Next.js 15, RAPIDS)
 - [MyNextDate](https://devpost.com/software/mynextdate) (Hacklytics 2026, team of four): a date planner that scores dates with an LLM (Llama 3.1 on Groq) and recommends the next one by vector similarity search (React, FastAPI, Actian Vector AI DB)
 - [ML-Optimized Ad Blocker](https://github.com/jaydaftari/LLM-Based-AdBlocker) (co-built): a self-learning ad-blocking proxy that classifies new domains with an LLM (Llama 3.1 8B on Groq) and caches each verdict in a trie for microsecond lookups (Python, mitmproxy)
