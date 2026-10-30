@@ -1,6 +1,6 @@
 # Jay Daftari
 
-> Jay Daftari is a computer scientist and Gen AI engineer trained in AI and machine learning at New York University (MS, Computer Engineering). Jay builds agentic AI systems, retrieval-augmented generation (RAG) pipelines and LLM tooling, most recently for legal teams at Lina Law and Wequity.
+> Jay Daftari is a computer scientist and AI engineer trained in AI and machine learning at New York University (MS, Computer Engineering). Jay builds agentic AI systems, retrieval-augmented generation (RAG) pipelines and LLM tooling, most recently for legal teams at Lina Law and Wequity.
 
 Portfolio: https://jaydaftari.github.io/
 Location: New York, NY, USA
