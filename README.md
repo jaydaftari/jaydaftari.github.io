@@ -41,6 +41,7 @@ cd jaydaftari.github.io
 - 📄 [Resume (PDF)](https://jaydaftari.github.io/assets/resume/jay_resume.pdf)
 - 💼 [LinkedIn](https://www.linkedin.com/in/jay-daftari/)
 - 🐙 [GitHub](https://github.com/jaydaftari)
+- 𝕏 [X](https://x.com/jaydaftari19)
 - 📧 jd5829@nyu.edu
 
 ## License
