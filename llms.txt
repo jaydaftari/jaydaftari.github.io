@@ -4,7 +4,7 @@
 
 Portfolio: https://jaydaftari.github.io/
 Location: New York, NY, USA
-Last updated: 2026-10-30
+Last updated: 2026-11-14
 
 ## Experience
 
@@ -33,6 +33,10 @@ Last updated: 2026-10-30
 
 - [Explainable AI Framework for Multi-label Classification using Supervised Machine Learning Models](https://ceur-ws.org/Vol-3283/Paper3b.pdf), CEUR Workshop Proceedings, Nov 2022
 - [Efficient Dynamic Phishing Safeguard System Using Neural Boost Phishing Protections](https://www.mdpi.com/2079-9292/11/19/3133), Electronics (MDPI), Sep 2022
+
+## Blog
+
+- [2022–2026: How AI Changed Software Engineering and What Comes Next](https://shelclub.vercel.app/articles/2022-2026-how-ai-changed-software-engineering-and-what-comes-next), ShelClub (Tech), Nov 2026
 
 ## Selected projects
 
