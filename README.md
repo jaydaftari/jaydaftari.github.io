@@ -16,7 +16,7 @@ I'm a Computer Science graduate student at **NYU** with 2+ years of experience a
 - **Publications** — Explainable AI for water quality (CEUR-WS) & Dynamic Phishing Safeguard (MDPI Electronics)
 - **Skills** — Python, C/C++, JS/TS, React, Flask, TensorFlow, PyTorch, AWS, Docker, Kubernetes & more
 - **Education** — MS in Computer Engineering (NYU) | BTech in CS (VIT Chennai)
-- **Contact** — Email, GitHub, LinkedIn
+- **Contact** — Email, GitHub, LinkedIn, and a link to my blog on ShelClub
 
 ## Tech Stack
 
