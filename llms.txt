@@ -4,7 +4,7 @@
 
 Portfolio: https://jaydaftari.github.io/
 Location: New York, NY, USA
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Experience
 
@@ -36,6 +36,7 @@ Last updated: 2026-11-14
 
 ## Blog
 
+- [Recipe for writing Evals in 9 steps](https://shelclub.vercel.app/articles/recipe-for-writing-evals-in-9-steps), ShelClub (Tech), Nov 2026
 - [2022–2026: How AI Changed Software Engineering and What Comes Next](https://shelclub.vercel.app/articles/2022-2026-how-ai-changed-software-engineering-and-what-comes-next), ShelClub (Tech), Nov 2026
 
 ## Selected projects
